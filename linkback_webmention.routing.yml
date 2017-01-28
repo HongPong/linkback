@@ -1,0 +1,7 @@
+linkback_webmention.settings:
+  path: '/admin/config/linkback/webmention'
+  defaults:
+    _form: '\Drupal\linkback_webmention\Form\WebmentionSettingsForm'
+    _title: 'Webmention Settings and tests'
+  requirements:
+    _permission: 'administer linkback'

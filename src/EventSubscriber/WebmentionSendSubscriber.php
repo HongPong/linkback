@@ -12,13 +12,14 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use \Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use IndieWeb\MentionClient;
 
 /**
  * Class LinkbackSendSubscriber.
  *
  * @package Drupal\linkback_webmention
  */
-class LinkbackSendSubscriber implements EventSubscriberInterface {
+class WebmentionSendSubscriber implements EventSubscriberInterface {
 
   /**
    * Agent.

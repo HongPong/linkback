@@ -8,6 +8,7 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityStorageException;
+use IndieWeb\MentionClient;
 
 /**
  * Implements hook_help().
