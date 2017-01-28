@@ -10,5 +10,16 @@
     "issues": "http://drupal.org/project/issues/linkback",
     "source": "http://cgit.drupalcode.org/linkback"
   },
-  "require": { }
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/microformats/tests"
+    }
+  ],
+  "require": {
+    "mf2/mf2": "dev-master",
+    "microformats/test": "@dev",
+    "indieweb/mention-client": "dev-master",
+    "barnabywalters/mf-cleaner": "dev-master"
+  }
 }
