@@ -1,0 +1,7 @@
+name: Linkback Webmention
+type: module
+description: Webmention handler for linkback module.
+core: 8.x
+package: services
+dependencies:
+  - linkback

@@ -1,0 +1,14 @@
+{
+  "name": "drupal/linkback_webmention",
+  "type": "drupal-module",
+  "description": "Webmention functions for Linkback",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/linkback",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/linkback",
+    "source": "http://cgit.drupalcode.org/linkback"
+  },
+  "require": { }
+}

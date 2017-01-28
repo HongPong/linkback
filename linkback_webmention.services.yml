@@ -1,0 +1,7 @@
+services:
+  linkback_webmention.send_subscriber:
+    class: Drupal\linkback_webmention\EventSubscriber\LinkbackSendSubscriber
+    arguments: ["@http_client", '@logger.channel.linkback']
+    tags:
+      - { name: event_subscriber }
+
