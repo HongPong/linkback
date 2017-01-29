@@ -103,15 +103,47 @@ class WebmentionTestsForm extends FormBase {
         );
         $form['actions']['delete'] = array(
             '#type' => 'submit',
-            '#value' => $this->t('Delete the universe'),
+            '#value' => $this->t('Delete all sent/received Webmentions'),
             '#button_type' => 'secondary',
             '#submit' => array('::deleteQueue'),
+            '#disabled' => true,
+        );
+
+        $form['incoming_test']['help'] = array(
+            '#type' => 'markup',
+            '#markup' => $this->t('Here are functions to test local Webmentions and save an entity correctly.'),
+        );
+        $form['incoming_test']['checkRemoteContent'] = [
+            '#type' => 'checkbox',
+            '#title' => $this->t('Check remote URL for valid inbound link'),
+            '#description' => $this->t('If true, it will go look for the URL remotely before saving. Not implemented'),
+            '#disabled' => true,
+        ];
+        $form['incoming_test']['localtargetURL'] = array(
+            '#type' => 'url',
+            '#title' => $this->t('Local target URL (should be existing node URL)'),
+            '#size' => 40,
+        );
+        $form['incoming_test']['remoteSenderURL'] = array(
+            '#type' => 'url',
+            '#title' => $this->t('Remote URL get webmention from'),
+            '#size' => 40,
+        );
+        $form['incoming_test']['triggerIncoming'] = array(
+            '#type' => 'submit',
+            '#value' => $this->t('Trigger incoming Webmention save'),
+            '#button_type' => 'secondary',
+            '#submit' => array('::testLocalTarget'),
             //'#disabled' => $queue->numberOfItems() < 1,
         );
         return $form;
     }
 
-
+    /**
+     * Tries to check the remote URL using function at src/Webmention.php
+     * @param array $form
+     * @param FormStateInterface $form_state
+     */
     public function testRemoteURL(array &$form, FormStateInterface $form_state) {
         /** @var \Drupal\Core\Queue\QueueInterface $queue */
         //$queue = $this->queueFactory->get($this->getQueue());
@@ -124,6 +156,24 @@ class WebmentionTestsForm extends FormBase {
         //kint($form_state);
 
         Webmention::checkRemoteURL($target, $debug);
+    }
+
+    /**
+     * Tries to save a local entity.
+     * @param array $form
+     * @param FormStateInterface $form_state
+     */
+    public function testLocalTarget(array &$form, FormStateInterface $form_state) {
+        $localTarget = $form_state->getValue('localtargetURL');
+        $remoteSender = $form_state->getValue('remoteSenderURL');
+        $debug = $form_state->getValue('debugmode');
+        // todo the logger string is not sanitized correctly at all.
+        \Drupal::logger('linkback_webmention')->notice('Trying to do a local target test from '. $remoteSender . ' to ' . $localTarget);
+        // todo return values should be made useful.
+        $testval = linkback_webmention__receive_webmention($remoteSender, $localTarget);
+        kint($testval);
+        $testmsg = 'Webmention: Tested local target: ' . $testval ;
+        \Drupal::logger('linkback_webmention')->notice($testmsg);
     }
 
     /**

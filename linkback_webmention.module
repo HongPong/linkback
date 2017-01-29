@@ -2,7 +2,8 @@
 
 /**
  * @file
- * Contains linkback_webmention.module..
+ * Contains linkback_webmention.module.
+ * todo: Note that there are old XMLRPC stuff left over from pingback by aleix code.
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -72,7 +73,7 @@ function linkback_webmention_node_view(array &$build, \Drupal\Core\Entity\Entity
 
 
 /**
- * XML-RPC callback for the pingback.ping method.
+ * Create an incoming Webmention.
  *
  * @param string $source_uri
  *   The URL of the third-party post.
@@ -87,6 +88,7 @@ function linkback_webmention__receive_webmention($source_uri, $target_uri) {
   // will not obtain the content id (nid).
   // For a case where field translate is used it's not problematic...
   global $base_url;
+  $ref_content = ""; // todo Temporary test.
   try {
     $alias = str_replace($base_url, "", $target_uri);
 
@@ -109,15 +111,18 @@ function linkback_webmention__receive_webmention($source_uri, $target_uri) {
     return xmlrpc_error($error_code, $error_message);
   }
 
-  $linkback = entity_create('linkback_received', [
-    'handler'  => 'linkback_webmention',
-    'ref_content' => $ref_content,
-    'url'      => $source_uri,
-  ]);
+  $linkback_attributes = [
+      'handler'  => 'linkback_webmention',
+      'ref_content' => $ref_content,
+      'url'      => $source_uri,
+  ];
+  $linkback = \Drupal::entityTypeManager()
+      ->getStorage('linkback_received') // TODO this name will be changed #2847387
+      ->create($linkback_attributes);
 
   try {
     $result = $linkback->save();
-    $message = t('Pingback from @source to @target registered.', array('@source' => $source_uri, '@target' => $target_uri));
+    $message = t('Webmention from @source to @target registered.', array('@source' => $source_uri, '@target' => $target_uri));
     return (string) $message;
   }
   catch (EntityStorageException $exception) {
@@ -127,7 +132,8 @@ function linkback_webmention__receive_webmention($source_uri, $target_uri) {
 }
 
 /**
- * Lookup the correct pingback protocol-response for an error.
+ * Lookup the correct Webmention protocol-response for an error.
+ * todo this should follow the Webmention spec.
  */
 function _linkback_webmention__protocol_errors($error_code) {
   // Error codes defined by the protocol documentation:
