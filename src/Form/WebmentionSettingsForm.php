@@ -43,11 +43,11 @@ class WebmentionSettingsForm extends ConfigFormBase {
             '#markup' => $this->t('Webmentions are a more modern form of trackbacks. You can control the settings here. Use the Webmentions Tests tab to see if you can scrape remotely.'),
         );
 
-        $form['use_cron'] = [
+        $form['endpoints_enabled'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Use cron'),
             '#description' => $this->t('Webmentions endpoints enabled?') ,
-            '#default_value' => $config->get('use_cron'),
+            '#default_value' => $config->get('endpoints_enabled'),
         ];
 
         return parent::buildForm($form, $form_state);
