@@ -38,14 +38,19 @@ class WebmentionSettingsForm extends ConfigFormBase {
      */
     public function buildForm(array $form, FormStateInterface $form_state) {
         $config = $this->config('linkback_webmention.settings');
+        $helpstring = "Webmentions are a more modern form of trackbacks. You can control the settings here. "
+        ."Use the Webmentions Tests tab to see if you can scrape remotely. "
+        ."Endpoints must be enabled for Webmentions to be received. "
+        ."See <a href='http://cgit.drupalcode.org/linkback/tree/linkback_webmention/README.md?h=8.x-1.x'>"
+        ."linkback_webmention README.md</a> for further information.";
         $form['help'] = array(
             '#type' => 'markup',
-            '#markup' => $this->t('Webmentions are a more modern form of trackbacks. You can control the settings here. Use the Webmentions Tests tab to see if you can scrape remotely.'),
+            '#markup' => $this->t($helpstring),
         );
 
         $form['endpoints_enabled'] = [
             '#type' => 'checkbox',
-            '#title' => $this->t('Use cron'),
+            '#title' => $this->t('Enable Webmention endpoints'),
             '#description' => $this->t('Webmentions endpoints enabled?') ,
             '#default_value' => $config->get('endpoints_enabled'),
         ];
@@ -62,13 +67,7 @@ class WebmentionSettingsForm extends ConfigFormBase {
         $config = $this->config('linkback_webmention.settings');
         // TODO CHECK IF IT CAN BE CHANGED (no items in queue!!!);
         // TODO provide link to process queue.
-        /** @var QueueFactory $queue_factory */
-        $queue_factory = \Drupal::service('queue');
-        /** @var QueueInterface $queue */
-        $queue = $queue_factory->get($config->get('use_cron') ? 'cron_linkback_webmention_sender' : 'manual_linkback_webmention_sender');
-        if ($queue->numberOfItems() > 0) {
-            $form_state->setErrorByName('use_cron', t('Could not change this options as @qitems items remain in queue, run or remove these in queue tab', array('@qitems' => $queue->numberOfItems())));
-        }
+
     }
 
     /**
@@ -78,7 +77,7 @@ class WebmentionSettingsForm extends ConfigFormBase {
         parent::submitForm($form, $form_state);
 
         $this->config('linkback_webmention.settings')
-            ->set('use_cron', $form_state->getValue('use_cron'))
+            ->set('endpoints_enabled', $form_state->getValue('endpoints_enabled'))
             ->save();
     }
 

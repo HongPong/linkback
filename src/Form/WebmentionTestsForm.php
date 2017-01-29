@@ -79,7 +79,7 @@ class WebmentionTestsForm extends FormBase {
 
         $form['help'] = array(
             '#type' => 'markup',
-            '#markup' => $this->t('Here are functions to test remote Webmentions'),
+            '#markup' => $this->t('Here are functions to test remote Webmentions. '),
         );
         $form['actions']['#type'] = 'actions';
 
@@ -91,7 +91,7 @@ class WebmentionTestsForm extends FormBase {
         $form['actions']['debugmode'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Debug mode'),
-            '#description' => $this->t('Use debug flag on testing Webmention scrape .') ,
+            '#description' => $this->t('Use debug flag on testing Webmention scrape . Not implemented') ,
             //'#default_value' => $config->get('use_cron'),
         ];
         $form['actions']['submit'] = array(
@@ -106,6 +106,7 @@ class WebmentionTestsForm extends FormBase {
             '#value' => $this->t('Delete all sent/received Webmentions'),
             '#button_type' => 'secondary',
             '#submit' => array('::deleteQueue'),
+            '#description' => $this->t('Not implemented'),
             '#disabled' => true,
         );
 
