@@ -38,10 +38,15 @@ class WebmentionSettingsForm extends ConfigFormBase {
      */
     public function buildForm(array $form, FormStateInterface $form_state) {
         $config = $this->config('linkback_webmention.settings');
+        $form['help'] = array(
+            '#type' => 'markup',
+            '#markup' => $this->t('Webmentions are a more modern form of trackbacks. You can control the settings here. Use the Webmentions Tests tab to see if you can scrape remotely.'),
+        );
+
         $form['use_cron'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Use cron'),
-            '#description' => $this->t('Use cron to process the sending of linkbacks.') ,
+            '#description' => $this->t('Webmentions endpoints enabled?') ,
             '#default_value' => $config->get('use_cron'),
         ];
 
