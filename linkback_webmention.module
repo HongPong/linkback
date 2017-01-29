@@ -9,6 +9,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityStorageException;
 use IndieWeb\MentionClient;
+use Drupal\linkback\Entity\LinkbackReceived; // TODO this name will be changed #2847387
+
 
 /**
  * Implements hook_help().
