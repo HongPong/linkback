@@ -10,7 +10,7 @@ linkback.admin:
 linkback.admin_sent:
   path: '/admin/content/linkback/sent'
   defaults:
-    _title: 'Linkbacks'
+    _title: 'Sent Linkbacks'
     _controller: '\Drupal\linkback\Controller\AdminController::adminPage'
     type: 'sent'
   requirements:
@@ -20,7 +20,7 @@ linkback.admin_queue:
   path: '/admin/content/linkback/queue'
   defaults:
     _form: '\Drupal\linkback\Form\LinkbackSenderQueueForm'
-    _title: 'Linkback sender'
+    _title: 'Linkback sending queue'
   requirements:
     _permission: 'administer linkback'
 
