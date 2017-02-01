@@ -7,6 +7,7 @@
 namespace Drupal\linkback_webmention\Form;
 
 use Drupal\Core\Form\FormBase;
+use Drupal\linkback_webmention;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\linkback_webmention\Webmention;
 use Drupal\Core\Queue\QueueFactory;
@@ -91,7 +92,8 @@ class WebmentionTestsForm extends FormBase {
         $form['actions']['debugmode'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Debug mode'),
-            '#description' => $this->t('Use debug flag on testing Webmention scrape . Not implemented') ,
+            '#description' => $this->t('Set debug flag in mention-client library for third-party scrape.') ,
+            '#return_value' => TRUE,
             //'#default_value' => $config->get('use_cron'),
         ];
         $form['actions']['submit'] = array(
@@ -150,13 +152,15 @@ class WebmentionTestsForm extends FormBase {
         //$queue = $this->queueFactory->get($this->getQueue());
         //$queue->deleteQueue();
         $target = $form_state->getValue('RemoteURL');
-        $debug = $form_state->getValue('debugmode');
+        $debug = (bool) $form_state->getValue('debugmode');
         $resultmessage = 'Test: URL tested: ' . $target;
         \Drupal::logger('linkback_webmention')->notice($resultmessage);
         drupal_set_message($resultmessage, $type = 'status', $repeat = FALSE);
         //kint($form_state);
-
-        Webmention::checkRemoteURL($target, $debug);
+        $falsebool = Webmention::staticThing();
+        $clientObj = new Webmention();
+        $theresult = 'checkRemoteURL: '. $clientObj->checkRemoteURL($target, $debug);
+        drupal_set_message($theresult , $type = 'status', $repeat = FALSE);
     }
 
     /**
@@ -175,6 +179,10 @@ class WebmentionTestsForm extends FormBase {
         kint($testval);
         $testmsg = 'Webmention: Tested local target: ' . $testval ;
         \Drupal::logger('linkback_webmention')->notice($testmsg);
+
+        $this->config('linkback_webmention.settings')
+            ->set('debugmode', $form_state->getValue('debugmode'))
+            ->save();
     }
 
     /**

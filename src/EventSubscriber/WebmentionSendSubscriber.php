@@ -15,7 +15,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use IndieWeb\MentionClient;
 
 /**
- * Class LinkbackSendSubscriber.
+ * Class WebmentionSendSubscriber.
  *
  * @package Drupal\linkback_webmention
  */
