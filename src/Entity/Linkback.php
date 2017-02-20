@@ -248,7 +248,8 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRequired(TRUE);
 
     $fields['excerpt'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Excerpt'))
@@ -264,7 +265,8 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRequired(TRUE);
 
     $fields['handler'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Handler'))
@@ -315,6 +317,55 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
       ->setDescription(t('The time that the entity was last edited.'));
 
     return $fields;
+  }
+
+  /**
+   * Save a received ref-back.
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    parent::preSave($storage);
+    // Invoke validation.
+    $this->setValidationRequired(TRUE);
+    if ($this->validate()->count() == 0) {
+      // Save the entity.
+      // Entity presave/update/insert hooks will be invoked by the entity API
+      // controller.
+      // @see hook_linkback_received_presave()
+      // @see hook_linkback_received_insert()
+      // @see hook_linkback_received_update()
+      \Drupal::logger('linkback')->notice("Tempted linkback could be registered");
+    }
+    else {
+      if ($this->validate()->getByFields(['handler'])->count() == 1) {
+        \Drupal::logger('linkback')->error("The refback-handler must be provided.");
+        throw new LinkbackException('The refback-handler must be provided.');
+      }
+      if ($this->validate()->getByFields(['title'])->count() == 1 || $this->validate()->getByFields(['excerpt'])->count() == 1) {
+        try {
+          $local_url =  \Drupal::service('linkback.default')->getLocalUrl($this->getRefContent());
+          $data = \Drupal::service('linkback.default')->getRemoteData($this->getRefContent(), $this->getUrl(), $local_url);
+          list($title, $excerpt) = $data;
+          if (empty($this->getTitle())) {
+            $this->setTitle($title);
+          }
+          if (empty($this->getExcerpt())) {
+            $this->setExcerpt($excerpt);
+          }
+
+        }
+        catch (Exception $exception) {
+          throw new LinkbackException($exception->getMessage(), $exception->getCode());
+        }
+      }
+      if ($this->validate()->getEntityViolations()->count() > 0) {
+        // COND FOR LINKBACK_ERROR_REFBACK_ALREADY_REGISTERED
+        // AND COND FOR LINKBACK_ERROR_LOCAL_NODE_REFBACK_NOT_ALLOWED.
+        $violation = $this->validate()->getEntityViolations()[0];
+        throw new LinkbackException($violation->getCause(), $violation->getCode());
+      }
+
+    }
+    $this->setOrigin(\Drupal::request()->getClientIP());
   }
 
 }
