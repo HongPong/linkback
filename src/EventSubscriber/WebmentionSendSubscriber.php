@@ -1,17 +1,13 @@
 <?php
 
-/**
- * @file
- */
-
 namespace Drupal\linkback_webmention\EventSubscriber;
 
+use IndieWeb\MentionClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\linkback_webmention\Event\LinkbackSendEvent;
+use Drupal\Core\Url;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use \Psr\Log\LoggerInterface;
-use Symfony\Component\DomCrawler\Crawler;
+use Psr\Log\LoggerInterface;
 use IndieWeb\MentionClient;
 
 /**
@@ -44,122 +40,80 @@ class WebmentionSendSubscriber implements EventSubscriberInterface {
   protected $logger;
 
   /**
+   * A logger instance.
+   *
+   * @var \IndieWeb\MentionClient
+   */
+  protected $mentionClient;
+
+  /**
    * Constructor.
    *
    * @param GuzzleHttp\Client $http_client
    *   GuzzleHttp\Client definition.
    * @param \Psr\Log\LoggerInterface $logger
-   *   A logger instance.   *    */
+   *   A logger instance.   *    .*/
   public function __construct(Client $http_client, LoggerInterface $logger) {
     $this->httpClient = $http_client;
     $this->logger = $logger;
+    $this->mentionClient = new MentionClient();
   }
 
   /**
    * {@inheritdoc}
    */
-  static function getSubscribedEvents() {
+  public static function getSubscribedEvents() {
     $events['linkback_send'] = ['onLinkbackSend'];
 
     return $events;
   }
 
   /**
-   * This method is called whenever the linkback_send event is
-   * dispatched.
+   * This method is called whenever the linkback_send event is dispatched.
    *
-   * @param GetResponseEvent $event
+   * @param \Drupal\linkback_webmention\Event\LinkbackSendEvent $event
+   *   The event to process.
    */
-  public function onLinkbackSend(Event $event) {
+  public function onLinkbackSend(LinkbackSendEvent $event) {
     drupal_set_message('Event linkback_send thrown by Subscriber in module linkback_webmention.', 'status', TRUE);
-    $this->sendWebmention($event->getSourceUrl(), $event->getTargetUrl());
+    $this->sendWebmention($event->getSource(), $event->getTarget());
   }
 
   /**
    * Sends the pingback.
    *
-   * @param Url $sourceUrl
-   * @param Url $targetUrl
+   * @param \Drupal\Core\Url $sourceUrl
+   *   The source url.
+   * @param \Drupal\Core\Url $targetUrl
+   *   The target url.
+   *
+   * @return array|bool
+   *   False if error The response with:
+   *     - code: the http return code.
+   *     - headers: the return headers.
+   *     - body: the returned body.
+   *
+   * @link https://github.com/indieweb/mention-client-php/blob/master/src/IndieWeb/MentionClient.php#L486
    */
-  public function sendWebmention($sourceUrl, $targetUrl) {
+  public function sendWebmention(Url $sourceUrl, Url $targetUrl) {
     $source = $sourceUrl->setOption("absolute", TRUE)->toString();
     $target = $targetUrl->setOption("absolute", TRUE)->toString();
-//    if ($xmlrpc_endpoint = $this->getXmlRpcEndpoint($target)) {
-//      $params = array(
-//        '%source' => $source,
-//        '%target' => $target,
-//        '%endpoint' => $xmlrpc_endpoint,
-//      );
-//      $methods = array(
-//        'pingback.ping' => array($source, $target),
-//      );
-//      $result = xmlrpc($xmlrpc_endpoint, $methods, array('headers' => array('User-Agent' => self::UA)));
-//      if ($result) {
-//        $params = array(
-//          '%source' => $source,
-//          '%target' => $target,
-//        );
-//        return TRUE;
-//      }
-//      else {
-//        $params = array(
-//          '%source' => $source,
-//          '%target' => $target,
-//          '@errno' => xmlrpc_errno(),
-//          '@description' => xmlrpc_error_msg(),
-//        );
-//        $this->logger->error('Pingback to %target from %source failed.<br />Error @errno: @description', $params);
-//        return FALSE;
-//      }
-//
-//    }
-    // No XML-RPC endpoint detected; pingback failed.
+    $supportsWebmention = $this->mentionClient->discoverWebmentionEndpoint($target);
+    if ($supportsWebmention) {
+      try {
+        $response = $this->mentionClient->sendWebmention($source, $target);
+        if ($response) {
+          $this->logger->notice('Response: @resp', ['@resp' => $response]);
+          return $response;
+        }
+      }
+      catch (Exception $exception) {
+        throw $exception;
+        // TODO handle this exception to propagate correctly.
+      }
+    }
     return FALSE;
+
   }
-  /**
-   * Get the URL of the XML-RPC endpoint that handles pingbacks for a URL.
-   *
-   * @param string $url
-   *   URL of the remote article
-   *
-   * @return String|FALSE
-   * Absolute URL of the XML-RPC endpoint, or FALSE if pingback is not
-   * supported.
-   */
-//  protected function getXmlRpcEndpoint($url) {
-//    try {
-//      $response = $this->httpClient->get($url, array('headers' => array('Accept' => 'text/plain')));
-//      $data = $response->getBody(TRUE);
-//      $endpoint = $response->getHeader('X-Pingback');
-//      if ($endpoint) {
-//        return $endpoint[0];
-//      }
-//      $crawler = new Crawler((string) $data);
-//      $endpoint = $crawler->filter('link[rel="pingback"]')->extract('href');
-//      if ($endpoint) {
-//        return $endpoint[0];
-//      }
-//    }
-//    catch (BadResponseException $exception) {
-//      $response = $exception->getResponse();
-//      $this->logger->notice('Failed to fetch url %endpoint due to HTTP error "%error"', array(
-//        '%endpoint' => $xmlrpc_endpoint,
-//        '%error' => $response->getStatusCode() . ' ' . $response->getReasonPhrase(),
-//      ));
-//    }
-//    catch (RequestException $exception) {
-//      $this->logger->notice('Failed to fetch url %endpoint due to error "%error"', array(
-//        '%endpoint' => $xmlrpc_endpoint,
-//        '%error' => $exception->getMessage(),
-//      ));
-//    }
-//    catch (InvalidArgumentException $exception) {
-//      $this->logger->notice('Failed to fetch url %endpoint due to error "%error"', array(
-//        '%endpoint' => $xmlrpc_endpoint,
-//        '%error' => $exception->getMessage(),
-//      ));
-//    }
-//    return FALSE;
-//  }
 
 }

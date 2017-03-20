@@ -4,4 +4,17 @@ services:
     arguments: ["@http_client", '@logger.channel.linkback']
     tags:
       - { name: event_subscriber }
-
+  linkback_webmention.receive_subscriber:
+    class: Drupal\linkback_webmention\EventSubscriber\WebmentionReceiveSubscriber
+    arguments: ['@logger.channel.linkback','@linkback_webmention.parser']
+    tags:
+      - { name: event_subscriber }
+  linkback_webmention.parser:
+    class: Drupal\linkback_webmention\LinkbackWebmentionParser
+    arguments: ['@logger.channel.linkback', "@linkback_webmention.mf2_parser","@linkback_webmention.rdf_parser" ]
+  linkback_webmention.mf2_parser:
+    class: Drupal\linkback_webmention\LinkbackWebmentionMF2Parser
+    arguments: ["@http_client"]
+  linkback_webmention.rdf_parser:
+    class: Drupal\linkback_webmention\LinkbackWebmentionRDFParser
+    arguments: []

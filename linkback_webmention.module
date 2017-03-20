@@ -6,15 +6,18 @@
  * todo: Note that there are old XMLRPC stuff left over from pingback by aleix code.
  */
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityStorageException;
 
-
 /**
  * Implements hook_help().
+ *
  * @param string $route_name
- * @param RouteMatchInterface $route_match
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *
  * @return string
  */
 function linkback_webmention_help($route_name, RouteMatchInterface $route_match) {
@@ -25,29 +28,10 @@ function linkback_webmention_help($route_name, RouteMatchInterface $route_match)
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Webmention functions for linkback') . '</p>';
       return $output;
+
     default:
   }
 }
-
-
-/**
- * Implements hook_xmlrpc().
- *
- * This XML-RPC endpoint handles registration of incoming pingback requests.
- */
-//function linkback_webmention_xmlrpc() {
-//  return array(
-//    array(
-//      'pingback.ping',
-//      'linkback_webmention__receive_pingback',
-//      // Return value is a string.
-//      // There are 2 string parameters.
-//      array('string', 'string', 'string'),
-//      t('Handles pingback pings.'),
-//    ),
-//  );
-//}
-
 
 /**
  * Implements hook_node_view().
@@ -56,23 +40,23 @@ function linkback_webmention_help($route_name, RouteMatchInterface $route_match)
  * URL.
  */
 function linkback_webmention_node_view(array &$build,
-                                       \Drupal\Core\Entity\EntityInterface $entity,
-                                       \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
-//  // @TODO: configurable view-modes?
-//  if ($view_mode == 'full' /*&& linkback_node_allows_linkback($node, 'receive')*/) {
-//    $pingback_endpoint = Url::fromRoute('xmlrpc', [], ['absolute' => TRUE ])->toString();
-//    $pingback_link = array(
-//      '#type' => 'html_tag',
-//      '#tag' => 'link',
-//      '#attributes' => array(
-//        'rel' => 'pingback',
-//        'href' => $pingback_endpoint,
-//      ),
-//    );
-//    $build['#attached']['html_head'][] = [$pingback_link, 'linkback_webmention'];
-//  }
+                                       EntityInterface $entity,
+                                       EntityViewDisplayInterface $display,
+ $view_mode) {
+  // // @TODO: configurable view-modes?
+  //  if ($view_mode == 'full' /*&& linkback_node_allows_linkback($node, 'receive')*/) {
+  //    $pingback_endpoint = Url::fromRoute('xmlrpc', [], ['absolute' => TRUE ])->toString();
+  //    $pingback_link = array(
+  //      '#type' => 'html_tag',
+  //      '#tag' => 'link',
+  //      '#attributes' => array(
+  //        'rel' => 'pingback',
+  //        'href' => $pingback_endpoint,
+  //      ),
+  //    );
+  //    $build['#attached']['html_head'][] = [$pingback_link, 'linkback_webmention'];
+  //  }.
 }
-
 
 /**
  * Create an incoming Webmention.
@@ -83,7 +67,7 @@ function linkback_webmention_node_view(array &$build,
  *   The URL of the node on this site.
  */
 function linkback_webmention__receive_webmention($source_uri, $target_uri) {
-  // todo rewrite the below stuff for webmentions
+  // Todo rewrite the below stuff for webmentions
   // The pingback protocol defines a static schema of 2 fields: sourceURI and
   // targetURI. No other data may be exchanged within the pingback protocol.
   // TODO Arrange the incoming language to allow obtaining the content url
@@ -91,14 +75,15 @@ function linkback_webmention__receive_webmention($source_uri, $target_uri) {
   // will not obtain the content id (nid).
   // For a case where field translate is used it's not problematic...
   global $base_url;
-  $ref_content = ""; // todo Temporary test.
+  // Todo Temporary test.
+  $ref_content = "";
   try {
     $alias = str_replace($base_url, "", $target_uri);
 
     $langs = Drupal::languageManager()->getLanguages();
     foreach ($langs as $lan) {
       // Iterate over all languages to get entity id, here we can obtain entity type.
-      $route_params = Url::fromUserInput(str_replace($base_url, "", $target_uri), ['language' => $lan ])->getRouteParameters();
+      $route_params = Url::fromUserInput(str_replace($base_url, "", $target_uri), ['language' => $lan])->getRouteParameters();
       foreach ($route_params as $entity_type => $entity_id) {
         // VALID ONLY FOR FIELD translate (as node translate has various nids for set).
         if ($entity_id) {
@@ -115,22 +100,23 @@ function linkback_webmention__receive_webmention($source_uri, $target_uri) {
     drupal_set_message(t($message), 'error');
     \Drupal::logger('linkback_webmention')->error($message);
     return (string) $message;
-    //return xmlrpc_error($error_code, $error_message);
+    // Return xmlrpc_error($error_code, $error_message);.
   }
 
-  // compose attributes of a linkback entity with webmention handler.
+  // Compose attributes of a linkback entity with webmention handler.
   $linkback_attributes = [
-      'handler'  => 'linkback_webmention',
-      'ref_content' => $ref_content, //todo not sure what this does.
-      'url'      => $source_uri,
+    'handler'  => 'linkback_webmention',
+  // Todo not sure what this does.
+    'ref_content' => $ref_content,
+    'url'      => $source_uri,
   ];
   $linkback = \Drupal::entityTypeManager()
-      ->getStorage('linkback')
-      ->create($linkback_attributes);
+    ->getStorage('linkback')
+    ->create($linkback_attributes);
 
   try {
     $result = $linkback->save();
-    $message = t('Webmention from @source to @target registered.', array('@source' => $source_uri, '@target' => $target_uri));
+    $message = t('Webmention from @source to @target registered.', ['@source' => $source_uri, '@target' => $target_uri]);
     return (string) $message;
   }
   catch (EntityStorageException $exception) {
@@ -139,61 +125,5 @@ function linkback_webmention__receive_webmention($source_uri, $target_uri) {
     drupal_set_message(t($message), 'error');
     \Drupal::logger('linkback_webmention')->error($message);
     return (string) $message;
-    //return xmlrpc_error($error_code, $error_message);
-  }
-}
-
-/**
- * Lookup the correct Webmention protocol-response for an error.
- * todo this should follow the Webmention spec.
- */
-function _linkback_webmention__protocol_errors($error_code) {
-  // Error codes defined by the protocol documentation:
-  //
-  // 0
-  // A generic fault code. Servers MAY use this error code instead of any of the
-  // others if they do not have a way of determining the correct fault code.
-  //
-  // 0×0010 (16)
-  // The source URI does not exist.
-  //
-  // 0×0011 (17)
-  // The source URI does not contain a link to the target URI, and so cannot be
-  // used as a source.
-  //
-  // 0×0020 (32)
-  // The specified target URI does not exist. This MUST only be used when the
-  // target definitely does not exist, rather than when the target may exist but
-  // is not recognised. See the next error.
-  //
-  // 0×0021 (33)
-  // The specified target URI cannot be used as a target. It either doesn't
-  // exist, or it is not a pingback-enabled resource. For example, on a blog,
-  // typically only permalinks are pingback-enabled, and trying to pingback the
-  // home page, or a set of posts, will fail with this error.
-  //
-  // 0×0030 (48)
-  // The pingback has already been registered.
-  //
-  // 0×0031 (49)
-  // Access denied.
-  //
-  // 0×0032 (50)
-  // The server could not communicate with an upstream server, or received an
-  // error from an upstream server, and therefore could not complete the
-  // request. This is similar to HTTP's 402 Bad Gateway error. This error SHOULD
-  // be used by pingback proxies when propagating errors.
-  switch ($error_code) {
-    case LINKBACK_ERROR_LOCAL_NODE_NOT_FOUND:
-      return array(0x0020, 'The specified target URI does not exist.');
-
-    case LINKBACK_ERROR_LOCAL_NODE_REFBACK_NOT_ALLOWED:
-      return array(0x0021, 'The specified target URI cannot be used as a target.');
-
-    case LINKBACK_ERROR_REFBACK_ALREADY_REGISTERED:
-      return array(0x0030, 'The Webmention has already been registered.');
-
-    default:
-      return array(0, 'An error occurred trying to register the Webmention. The Webmention was not registered.');
   }
 }

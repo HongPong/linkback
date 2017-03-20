@@ -7,3 +7,8 @@ linkback_webmention.tests:
   route_name: linkback_webmention.tests
   description: 'Tests for webmention'
   base_route: linkback_webmention.settings
+linkback_webmention.admin_queue:
+  title: 'Webmention receiving queue'
+  route_name: linkback_webmention.admin_queue
+  parent_id: linkback.admin
+  weight: 1 

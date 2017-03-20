@@ -5,6 +5,13 @@ linkback_webmention.settings:
     _title: 'Webmention Settings'
   requirements:
     _permission: 'administer linkback'
+linkback_webmention.admin_queue:
+  path: '/admin/content/linkback/webmention_queue'
+  defaults:
+    _form: '\Drupal\linkback_webmention\Form\WebmentionReceiverQueueForm'
+    _title: 'Webmention receiving queue'
+  requirements:
+    _permission: 'administer linkback'
 linkback_webmention.tests:
   path: '/admin/config/linkback/webmention/tests'
   defaults:
@@ -12,3 +19,10 @@ linkback_webmention.tests:
     _title: 'Webmention Tests'
   requirements:
     _permission: 'administer linkback'
+linkback_webmention.node_endpoint:
+  path: '/node/{node}/webmention'
+  defaults:
+    _controller: '\Drupal\linkback_webmention\Controller\EndpointController::nodeEndpoint'
+    _title: 'Webmention endpoint'
+  requirements:
+    _permission: 'access content'
