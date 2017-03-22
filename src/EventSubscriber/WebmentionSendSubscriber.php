@@ -8,7 +8,6 @@ use Drupal\linkback_webmention\Event\LinkbackSendEvent;
 use Drupal\Core\Url;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
-use IndieWeb\MentionClient;
 
 /**
  * Class WebmentionSendSubscriber.
