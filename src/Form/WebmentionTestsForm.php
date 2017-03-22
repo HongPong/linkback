@@ -52,7 +52,7 @@ class WebmentionTestsForm extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Test remote URL'),
       '#button_type' => 'primary',
-      '#submit' => ['::testRemoteURL'],
+      //'#submit' => ['::testRemoteURL'],
         // '#disabled' => $queue->numberOfItems() < 1,.
     ];
     $form['actions']['delete'] = [
@@ -100,7 +100,7 @@ class WebmentionTestsForm extends FormBase {
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
-  public function testRemoteURL(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $target = $form_state->getValue('RemoteURL');
     $debug = (bool) $form_state->getValue('debugmode');
     $resultmessage = 'Test: URL tested: ' . $target;
