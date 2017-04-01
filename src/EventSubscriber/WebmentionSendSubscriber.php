@@ -4,7 +4,7 @@ namespace Drupal\linkback_webmention\EventSubscriber;
 
 use IndieWeb\MentionClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Drupal\linkback_webmention\Event\LinkbackSendEvent;
+use Drupal\linkback\Event\LinkbackSendEvent;
 use Drupal\Core\Url;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
@@ -70,7 +70,7 @@ class WebmentionSendSubscriber implements EventSubscriberInterface {
   /**
    * This method is called whenever the linkback_send event is dispatched.
    *
-   * @param \Drupal\linkback_webmention\Event\LinkbackSendEvent $event
+   * @param \Drupal\linkback\Event\LinkbackSendEvent $event
    *   The event to process.
    */
   public function onLinkbackSend(LinkbackSendEvent $event) {
