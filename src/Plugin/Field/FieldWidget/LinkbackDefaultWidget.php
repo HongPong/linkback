@@ -110,6 +110,7 @@ class LinkbackDefaultWidget extends WidgetBase implements ContainerFactoryPlugin
     // in this tab-set.
     if (isset($form['advanced'])) {
       $elements += array(
+        '#title' => t('Linkbacks'),
         '#type' => 'details',
         '#group' => 'advanced',
       );

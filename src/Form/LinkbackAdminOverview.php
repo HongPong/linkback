@@ -178,7 +178,6 @@ class LinkbackAdminOverview extends FormBase {
     // Build a table listing the appropriate linkbacks.
     $options = array();
     $destination = $this->getDestinationArray();
-
     foreach ($linkbacks as $linkback) {
       /* @var $linkback \Drupal\Core\Entity\EntityInterface */
       $options[$linkback->id()] = array(
@@ -186,8 +185,8 @@ class LinkbackAdminOverview extends FormBase {
         'excerpt' => $linkback->getExcerpt(),
         'origin' => $linkback->getOrigin(),
         'handler' => $linkback->getHandler(),
-        'ref_content' => $linkback->getRefContent(),
-        'url' => $linkback->getUrl(),
+        'ref_content' => ['data' => $linkback->get('ref_content')->view()[0]],
+        'url' => ['data' => $linkback->get('url')->view()[0]],
         'changed' => $this->dateFormatter->format(
           $linkback->getChangedTime(),
           'short'

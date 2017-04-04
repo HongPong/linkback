@@ -74,10 +74,10 @@ class LinkbackSendRulesEvent extends Event {
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $source
    *   The source Url.
-   * @param \Drupal\Core\Url $target
+   * @param string $target
    *   The target Url.
    */
-  public function __construct(ContentEntityInterface $source, Url $target) {
+  public function __construct(ContentEntityInterface $source, $target) {
     $this->source = $source;
     $this->target = $target;
   }

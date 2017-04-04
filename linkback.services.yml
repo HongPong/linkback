@@ -3,3 +3,7 @@ services:
     class: Drupal\Core\Logger\LoggerChannel
     factory: logger.factory:get
     arguments: ['linkback']
+
+  linkback.default:
+    class: Drupal\linkback\LinkbackService
+    arguments: ['@http_client_factory', '@language_manager', '@path.alias_manager']
