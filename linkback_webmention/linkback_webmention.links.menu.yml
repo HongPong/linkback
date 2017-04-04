@@ -1,0 +1,6 @@
+linkback_webmention.settings:
+  title: 'Linkback Webmention settings'
+  route_name: linkback_webmention.settings
+  description: 'Configure Webmentions.'
+  parent: system.admin_config_services
+  weight: 99

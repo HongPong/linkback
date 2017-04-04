@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * @file
+ * Contains linkback_webmention.module.
+ * todo: Note that there are old XMLRPC stuff left over from pingback by aleix code.
+ */
+
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityStorageException;
+
+/**
+ * Implements hook_help().
+ *
+ * @param string $route_name
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *
+ * @return string
+ */
+function linkback_webmention_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the linkback_webmention module.
+    case 'help.page.linkback_webmention':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Webmention functions for linkback') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_node_view().
+ *
+ * Adds a HTTP header and a <link> tag which give the pingback server endpoint
+ * URL.
+ */
+function linkback_webmention_node_view(array &$build,
+                                       EntityInterface $entity,
+                                       EntityViewDisplayInterface $display,
+ $view_mode) {
+  // // @TODO: configurable view-modes?
+  //  if ($view_mode == 'full' /*&& linkback_node_allows_linkback($node, 'receive')*/) {
+  //    $pingback_endpoint = Url::fromRoute('xmlrpc', [], ['absolute' => TRUE ])->toString();
+  //    $pingback_link = array(
+  //      '#type' => 'html_tag',
+  //      '#tag' => 'link',
+  //      '#attributes' => array(
+  //        'rel' => 'pingback',
+  //        'href' => $pingback_endpoint,
+  //      ),
+  //    );
+  //    $build['#attached']['html_head'][] = [$pingback_link, 'linkback_webmention'];
+  //  }.
+}
+
+/**
+ * Create an incoming Webmention.
+ *
+ * @param string $source_uri
+ *   The URL of the third-party post.
+ * @param string $target_uri
+ *   The URL of the node on this site.
+ */
+function linkback_webmention__receive_webmention($source_uri, $target_uri) {
+  // Todo rewrite the below stuff for webmentions
+  // The pingback protocol defines a static schema of 2 fields: sourceURI and
+  // targetURI. No other data may be exchanged within the pingback protocol.
+  // TODO Arrange the incoming language to allow obtaining the content url
+  // If target_uri is published in es and you connect to web in en , Url::fromuserinput
+  // will not obtain the content id (nid).
+  // For a case where field translate is used it's not problematic...
+  global $base_url;
+  // Todo Temporary test.
+  $ref_content = "";
+  try {
+    $alias = str_replace($base_url, "", $target_uri);
+
+    $langs = Drupal::languageManager()->getLanguages();
+    foreach ($langs as $lan) {
+      // Iterate over all languages to get entity id, here we can obtain entity type.
+      $route_params = Url::fromUserInput(str_replace($base_url, "", $target_uri), ['language' => $lan])->getRouteParameters();
+      foreach ($route_params as $entity_type => $entity_id) {
+        // VALID ONLY FOR FIELD translate (as node translate has various nids for set).
+        if ($entity_id) {
+          $ref_content = $entity_id;
+          break;
+        }
+      }
+    }
+  }
+  catch (UnexpectedValueException $exception) {
+    // Despite content existance will be checked by entity later, doing now will speed up.
+    list ($error_code, $error_message) = _linkback_webmention__protocol_errors(LINKBACK_ERROR_LOCAL_NODE_NOT_FOUND);
+    $message = 'Linkback_webmention: receive_webmention error. Code: ' . $error_code . ' . Message: ' . $error_message;
+    drupal_set_message(t($message), 'error');
+    \Drupal::logger('linkback_webmention')->error($message);
+    return (string) $message;
+    // Return xmlrpc_error($error_code, $error_message);.
+  }
+
+  // Compose attributes of a linkback entity with webmention handler.
+  $linkback_attributes = [
+    'handler'  => 'linkback_webmention',
+  // Todo not sure what this does.
+    'ref_content' => $ref_content,
+    'url'      => $source_uri,
+  ];
+  $linkback = \Drupal::entityTypeManager()
+    ->getStorage('linkback')
+    ->create($linkback_attributes);
+
+  try {
+    $result = $linkback->save();
+    $message = t('Webmention from @source to @target registered.', ['@source' => $source_uri, '@target' => $target_uri]);
+    return (string) $message;
+  }
+  catch (EntityStorageException $exception) {
+    list ($error_code, $error_message) = _linkback_webmention__protocol_errors($exception->getCode());
+    $message = 'Linkback_webmention: receive_webmention error. Code: ' . $error_code . ' . Message: ' . $error_message;
+    drupal_set_message(t($message), 'error');
+    \Drupal::logger('linkback_webmention')->error($message);
+    return (string) $message;
+  }
+}
