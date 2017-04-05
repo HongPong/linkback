@@ -50,13 +50,6 @@ class WebmentionSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('endpoints_enabled'),
     ];
 
-    $form['use_cron_received'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Process received webmentions with cron'),
-      '#description' => $this->t('Check received webmentions with cron') ,
-      '#default_value' => $config->get('use_cron_received'),
-    ];
-
     return parent::buildForm($form, $form_state);
   }
 

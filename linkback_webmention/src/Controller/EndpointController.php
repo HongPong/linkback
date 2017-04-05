@@ -99,7 +99,7 @@ class EndpointController extends ControllerBase {
     }
     if (!empty($source) && !empty($target)) {
       /** @var QueueInterface $queue */
-      $queue = $this->queueFactory->get($this->configFactory->get('linkback_webmention.settings')->get('use_cron_received') ? 'cron_linkback_webmention_receiver' : 'manual_linkback_webmention_receiver');
+      $queue = $this->queueFactory->get($this->configFactory->get('linkback.settings')->get('use_cron_received') ? 'cron_linkback_receiver' : 'manual_linkback_receiver');
       $queue->createItem([
         "entity" => $node,
         "target" => $target,

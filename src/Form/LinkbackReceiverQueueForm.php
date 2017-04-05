@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\linkback_webmention\Form;
+namespace Drupal\linkback\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -11,9 +11,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
- * The class for Webmention Linkback receiver queue form. Based on FormBase.
+ * The class for Linkback receiver queue form. Based on FormBase.
  */
-class WebmentionReceiverQueueForm extends FormBase {
+class LinkbackReceiverQueueForm extends FormBase {
 
   /**
    * The queue factory.
@@ -67,15 +67,15 @@ class WebmentionReceiverQueueForm extends FormBase {
    *   The name of the QueueFactory.
    */
   protected function getQueue() {
-    $config = $this->configFactory->get('linkback_webmention.settings');
-    return $config->get('use_cron_received') ? 'cron_linkback_webmention_receiver' : 'manual_linkback_webmention_receiver';
+    $config = $this->configFactory->get('linkback.settings');
+    return $config->get('use_cron_received') ? 'cron_linkback_receiver' : 'manual_linkback_receiver';
   }
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'linkback_webmention_receiver_queue_form';
+    return 'linkback_receiver_queue_form';
   }
 
   /**
@@ -135,7 +135,7 @@ class WebmentionReceiverQueueForm extends FormBase {
         break;
       }
       catch (\Exception $e) {
-        watchdog_exception('linkback_webmention', $e);
+        watchdog_exception('linkback', $e);
       }
     }
   }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\linkback_webmention\Plugin\QueueWorker;
+namespace Drupal\linkback\Plugin\QueueWorker;
 
 use Drupal\Core\Entity\Query\QueryFactory;
 use GuzzleHttp\ClientInterface;
-use Drupal\linkback_webmention\Event\LinkbackReceiveEvent;
+use Drupal\linkback\Event\LinkbackReceiveEvent;
 use Drupal\linkback\Entity\Linkback;
 
 use Drupal\Core\Entity\EntityFieldManagerInterface;
@@ -17,7 +17,7 @@ use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 /**
  * Provides base functionality for the LinkbackReceiver Queue Workers.
  */
-abstract class LinkbackWebmentionReceiver extends QueueWorkerBase implements ContainerFactoryPluginInterface {
+abstract class LinkbackReceiver extends QueueWorkerBase implements ContainerFactoryPluginInterface {
   /**
    * Drupal\Core\Entity\Query\QueryFactory definition.
    *

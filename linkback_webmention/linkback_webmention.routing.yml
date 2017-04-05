@@ -5,13 +5,6 @@ linkback_webmention.settings:
     _title: 'Webmention Settings'
   requirements:
     _permission: 'administer linkback'
-linkback_webmention.admin_queue:
-  path: '/admin/content/linkback/webmention_queue'
-  defaults:
-    _form: '\Drupal\linkback_webmention\Form\WebmentionReceiverQueueForm'
-    _title: 'Webmention receiving queue'
-  requirements:
-    _permission: 'administer linkback'
 linkback_webmention.tests:
   path: '/admin/config/linkback/webmention/tests'
   defaults:

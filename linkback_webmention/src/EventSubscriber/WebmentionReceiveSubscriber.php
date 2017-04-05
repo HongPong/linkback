@@ -5,7 +5,7 @@ namespace Drupal\linkback_webmention\EventSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Psr\Log\LoggerInterface;
 use Drupal\linkback_webmention\LinkbackWebmentionParser;
-use Drupal\linkback_webmention\Event\LinkbackReceiveEvent;
+use Drupal\linkback\Event\LinkbackReceiveEvent;
 use Drupal\Core\Entity\EntityInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -54,7 +54,7 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
   /**
    * This method is called whenever the linkback_receive event is dispatched.
    *
-   * @param \Drupal\linkback_webmention\Event\LinkbackReceiveEvent $event
+   * @param \Drupal\linkback\Event\LinkbackReceiveEvent $event
    *   The event to process.
    */
   public function onLinkbackReceive(LinkbackReceiveEvent $event) {

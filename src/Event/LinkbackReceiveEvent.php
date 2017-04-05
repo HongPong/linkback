@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\linkback_webmention\Event;
+namespace Drupal\linkback\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 use Psr\Http\Message\ResponseInterface;

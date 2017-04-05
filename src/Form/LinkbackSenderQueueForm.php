@@ -68,7 +68,7 @@ class LinkbackSenderQueueForm extends FormBase {
    */
   protected function getQueue() {
     $config = $this->configFactory->get('linkback.settings');
-    return $config->get('use_cron') ? 'cron_linkback_sender' : 'manual_linkback_sender';
+    return $config->get('use_cron_send') ? 'cron_linkback_sender' : 'manual_linkback_sender';
   }
 
   /**

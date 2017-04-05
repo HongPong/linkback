@@ -28,6 +28,7 @@ linkback.admin_received:
   title: 'Received linkbacks'
   route_name: linkback.admin
   parent_id: linkback.admin
+  weight: 0
 
 linkback.admin_sent:
   title: 'Sent linkbacks'
@@ -36,9 +37,15 @@ linkback.admin_sent:
   parent_id: linkback.admin
   weight: 1
 
-linkback.admin_queue:
+linkback.admin_queue_received:
+  title: 'Receiving queue'
+  route_name: linkback.admin_queue_received
+  parent_id: linkback.admin
+  weight: 2
+
+linkback.admin_queue_send:
   title: 'Sending Queue'
-  route_name: linkback.admin_queue
+  route_name: linkback.admin_queue_send
   class: Drupal\linkback\Plugin\Menu\LocalTask\QueuedLinkbacks
   parent_id: linkback.admin
-  weight: 1
+  weight: 3

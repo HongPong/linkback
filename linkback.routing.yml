@@ -16,11 +16,18 @@ linkback.admin_sent:
   requirements:
     _permission: 'administer linkbacks'
 
-linkback.admin_queue:
-  path: '/admin/content/linkback/queue'
+linkback.admin_queue_send:
+  path: '/admin/content/linkback/queue_send'
   defaults:
     _form: '\Drupal\linkback\Form\LinkbackSenderQueueForm'
     _title: 'Linkback sending queue'
+  requirements:
+    _permission: 'administer linkback'
+linkback.admin_queue_received:
+  path: '/admin/content/linkback/queue_received'
+  defaults:
+    _form: '\Drupal\linkback\Form\LinkbackReceiverQueueForm'
+    _title: 'Linkback receiving queue'
   requirements:
     _permission: 'administer linkback'
 
