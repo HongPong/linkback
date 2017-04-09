@@ -16,6 +16,13 @@ class LinkbackReceiveEvent extends Event {
   const EVENT_NAME = 'linkback_receive';
 
   /**
+   * The linkback handler that creates this item.
+   *
+   * @var string
+   */
+  protected $handler;
+
+  /**
    * The source url.
    *
    * @var string
@@ -53,6 +60,8 @@ class LinkbackReceiveEvent extends Event {
   /**
    * Constructs the object.
    *
+   * @param string $handler
+   *   The linkback handler that creates this event.
    * @param string $source
    *   The source Url.
    * @param string $target
@@ -64,12 +73,33 @@ class LinkbackReceiveEvent extends Event {
    * @param array $linkbacks
    *   The existant linkbacks with these source and target if any.
    */
-  public function __construct($source, $target, EntityInterface $local_entity, ResponseInterface $response, array $linkbacks) {
+  public function __construct($handler, $source, $target, EntityInterface $local_entity, ResponseInterface $response, array $linkbacks) {
+    $this->handler = $handler;
     $this->source = $source;
     $this->target = $target;
     $this->localEntity = $local_entity;
     $this->response = $response;
     $this->linkbacks = $linkbacks;
+  }
+
+  /**
+   * Getter for the linkback handler.
+   *
+   * @return string
+   *   The linkback handler.
+   */
+  public function getHandler() {
+    return $this->handler;
+  }
+
+  /**
+   * Setter for the linkback handler.
+   *
+   * @param string $handler
+   *   The linkback handler.
+   */
+  public function setHandler($handler) {
+    $this->handler = $handler;
   }
 
   /**

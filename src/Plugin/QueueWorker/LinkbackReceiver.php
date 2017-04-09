@@ -155,7 +155,7 @@ abstract class LinkbackReceiver extends QueueWorkerBase implements ContainerFact
       return;
     }
 
-    $event = new LinkbackReceiveEvent($data['source'], $data['target'], $content, $response, $linkbacks);
+    $event = new LinkbackReceiveEvent($data['handler'], $data['source'], $data['target'], $content, $response, $linkbacks);
     $this->eventDispatcher->dispatch(LinkbackReceiveEvent::EVENT_NAME, $event);
     // Each linkback submodule needs to apply logic with all collected data,
     // for example check if linkback exists...

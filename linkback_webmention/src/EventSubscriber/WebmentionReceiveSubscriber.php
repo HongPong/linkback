@@ -58,6 +58,9 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
    *   The event to process.
    */
   public function onLinkbackReceive(LinkbackReceiveEvent $event) {
+    if ($event->getHandler() != "linkback_webmention") {
+      return;
+    }
     drupal_set_message('Event linkback_receive thrown by Subscriber in module linkback_webmention.', 'status', TRUE);
     $linkback = NULL;
     foreach ($event->getLinkbacks() as $existant_linkback) {
