@@ -1,0 +1,12 @@
+services:
+  linkback_pingback.send_subscriber:
+    class: Drupal\linkback_pingback\EventSubscriber\PingbackSendSubscriber
+    arguments: ["@http_client", '@logger.channel.linkback']
+    tags:
+      - { name: event_subscriber }
+  linkback_pingback.receive_subscriber:
+    class: Drupal\linkback_pingback\EventSubscriber\PingbackReceiveSubscriber
+    arguments: ['@logger.channel.linkback', '@linkback.default']
+    tags:
+      - { name: event_subscriber }
+

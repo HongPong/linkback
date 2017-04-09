@@ -1,0 +1,14 @@
+{
+  "name": "drupal/linkback_pingback",
+  "type": "drupal-module",
+  "description": "pingback functions for Linkback",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/linkback_pingback",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/linkback_pingback",
+    "source": "http://cgit.drupalcode.org/linkback_pingback"
+  },
+  "require": { }
+}

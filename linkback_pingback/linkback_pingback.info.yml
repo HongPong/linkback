@@ -1,0 +1,7 @@
+name: Linkback Pingback
+type: module
+description: Pingback handler for Linkback module.
+core: 8.x
+package: Services
+dependencies:
+  - linkback
