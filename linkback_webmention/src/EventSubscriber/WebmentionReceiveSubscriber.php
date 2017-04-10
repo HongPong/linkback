@@ -80,10 +80,10 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
    *   The mentioned entity.
    * @param \Psr\Http\Message\ResponseInterface $response
    *   The response fetched from source.
-   * @param \Drupal\Core\Entity\EntityInterface $linkback
+   * @param \Drupal\Core\Entity\EntityInterface|null $linkback
    *   The existant linkbacks with these source and target if any.
    */
-  public function processWebmention($sourceUrl, $targetUrl, EntityInterface $local_entity, ResponseInterface $response, EntityInterface $linkback) {
+  public function processWebmention($sourceUrl, $targetUrl, EntityInterface $local_entity, ResponseInterface $response, $linkback) {
     $urls = [
       '%source' => $sourceUrl,
       '%target' => $targetUrl,
