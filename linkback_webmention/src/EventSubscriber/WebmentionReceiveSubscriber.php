@@ -157,17 +157,16 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
       ]);
     }
     if (!empty($metainfo)) {
-      // TODO WHAT todo with structured metainfo?
       $linkback->setTitle($metainfo['name']);
       $excerpt = "";
-      $excerpt .= empty($metainfo['updated']) ? "" : "updated: " . $metainfo['updated'] . "\n";
-      $excerpt .= empty($metainfo['name']) ? "" : "name: " . $metainfo['name'] . "\n";
-      $excerpt .= empty($metainfo['summary']) ? "" : "summary: " . $metainfo['summary'] . "\n";
-      $excerpt .= empty($metainfo['type']) ? "" : "type: " . $metainfo['type'] . "\n";
-      $excerpt .= empty($metainfo['author']) ? "" : "author: " . $metainfo['author'] . "\n";
-      $excerpt .= empty($metainfo['author_image']) ? "" : "author_image: " . $metainfo['author_image'] . "\n";
-      $excerpt .= empty($metainfo['author_name']) ? "" : "author_name: " . $metainfo['author_name'] . "\n";
-      $excerpt .= "---RAW--- \n";
+      // WHAT TODO with structured metainfo?
+      // Metainfo array could include:
+      // - updated
+      // - name
+      // - type
+      // - author
+      // - author_image
+      // - author_name
       $excerpt .= json_encode($metainfo, JSON_PRETTY_PRINT);
       $linkback->setExcerpt($excerpt);
     }
