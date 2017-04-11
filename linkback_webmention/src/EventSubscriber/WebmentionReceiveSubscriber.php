@@ -114,7 +114,7 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     // Step 5: Get metainfo (h-card, foaf, simple ... ) First try mf2 then rdf,
     // finally: Basic.
     $metainfo = [];
-    if ($metainfo = $this->webmentionParser->getMf2Information($body, $targetUrl)) {
+    if ($metainfo = $this->webmentionParser->getMf2Information($body, $sourceUrl)) {
       $this->logger->notice('Found relevant microformats in source:%source ', ['%source' => $sourceUrl]);
     }
     elseif ($metainfo = $this->webmentionParser->getRdfInformation($body, $targetUrl)) {
