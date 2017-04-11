@@ -73,13 +73,13 @@ class LinkbackWebmentionMF2Parser {
   /**
    * Is this an h-card.
    *
-   * @param array $mf
+   * @param mixed $mf
    *   Parsed Microformats Array.
    *
    * @return bool
    *   TRUE or FALSE, where TRUE indicates it is h-card.
    */
-  protected function isHcard(array $mf) {
+  protected function isHcard($mf) {
     return is_array($mf) and !empty($mf['type']) and is_array($mf['type']) and in_array('h-card', $mf['type']);
   }
 
