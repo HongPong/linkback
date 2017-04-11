@@ -6,9 +6,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Psr\Log\LoggerInterface;
 use Drupal\linkback_webmention\LinkbackWebmentionParser;
 use Drupal\linkback\Event\LinkbackReceiveEvent;
+use Drupal\linkback\Exception\LinkbackException;
 use Drupal\Core\Entity\EntityInterface;
 use Psr\Http\Message\ResponseInterface;
-
 /**
  * Class WebmentionReceiveSubscriber.
  *
@@ -97,17 +97,18 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     }
     // Step 2: check if schema is http or https.
     if (!($this->webmentionParser->isValidSchema($sourceUrl, $targetUrl))) {
-      $this->logger->error('Received webmention has not a valid schema source:%source target: %target', $urls);
+      $this->logger->error('Received webmention has not a valid schema source: %source target: %target', $urls);
       return;
     }
     // Step 3: check if source and target are not the same.
     if ($sourceUrl == $targetUrl) {
-      $this->logger->error('Received webmention has same source:%source and target: %target', $urls);
+      $this->logger->error('Received webmention has same source: %source and target: %target', $urls);
       return;
     }
     // Step 4: check if $response body has target url.
     $body = (string) $response->getBody();
     if (!$this->webmentionParser->hasLink($targetUrl, $body)) {
+      $this->logger->notice('Received webmention linkback source: %source hasn\'t link to target: %target ', $urls);
       return;
     };
 
@@ -178,6 +179,10 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     }
     catch (EntityStorageException $exception) {
       $this->logger->error(t('Webmention from @source to @target not registered.', ['@source' => $source, '@target' => $target]));
+    }
+    catch (LinkbackException $exception){
+      $this->logger->error(t('Webmention from @source to @target not registered due to error: %error.', ['@source' => $source, '@target' => $target, '%error' => $exception->getMessage()]));
+
     }
   }
 
