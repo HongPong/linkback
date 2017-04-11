@@ -7,7 +7,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DomCrawler\Crawler;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
-
+use Drupal\linkback\Exception\LinkbackException;
 /**
  * Class LinkbackService.
  *
