@@ -138,7 +138,7 @@ class LinkbackWebmentionParser {
    *   Canonical MF2 array structure.
    */
   public function getMf2Information($body, $url) {
-    $mf2Info = $this->mf2Parser->mf2parse($body, $url);
+    $mf2Info = $this->mf2Parser->mf2Parse($body, $url);
     return $mf2Info;
   }
 
