@@ -8,12 +8,20 @@ use Symfony\Component\DomCrawler\Crawler;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\linkback\Exception\LinkbackException;
+use Psr\Log\LoggerInterface;
 /**
  * Class LinkbackService.
  *
  * @package Drupal\linkback
  */
 class LinkbackService {
+
+  /**
+   * A logger instance.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
 
   /**
    * The alias manager that caches alias lookups based on the request.
@@ -46,6 +54,8 @@ class LinkbackService {
   /**
    * Constructs a LinkbackService.
    *
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
    * @param \Drupal\Core\Http\ClientFactory $http_client_factory
    *   The Http client factory service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
@@ -53,7 +63,8 @@ class LinkbackService {
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
    *   The alias manager.
    */
-  public function __construct(ClientFactory $http_client_factory, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager) {
+  public function __construct(LoggerInterface $logger, ClientFactory $http_client_factory, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager) {
+    $this->logger = $logger;
     $this->httpClientFactory = $http_client_factory;
     $this->crawler = new Crawler();
     $this->languageManager = $language_manager;
@@ -129,11 +140,11 @@ class LinkbackService {
     }
     catch (BadResponseException $exception) {
       $response = $exception->getResponse();
-      drupal_set_message(t('Failed to fetch url due to HTTP error "%error"', array('%error' => $response->getStatusCode() . ' ' . $response->getReasonPhrase())), 'error');
+      $this->logger->error(t('Failed to fetch url due to HTTP error "%error"', array('%error' => $response->getStatusCode() . ' ' . $response->getReasonPhrase())), 'error');
       throw $exception;
     }
     catch (RequestException $exception) {
-      drupal_set_message(t('Failed to fetch url due to error "%error"', array('%error' => $exception->getMessage())), 'error');
+      $this->logger->error(t('Failed to fetch url due to error "%error"', array('%error' => $exception->getMessage())), 'error');
       throw $exception;
     }
 

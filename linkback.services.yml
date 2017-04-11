@@ -6,4 +6,4 @@ services:
 
   linkback.default:
     class: Drupal\linkback\LinkbackService
-    arguments: ['@http_client_factory', '@language_manager', '@path.alias_manager']
+    arguments: ['@logger.channel.linkback', '@http_client_factory', '@language_manager', '@path.alias_manager']
