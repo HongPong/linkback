@@ -884,7 +884,7 @@ class LinkbackWebmentionMF2Parser {
       'bookmark-of',
       'tag-of',
     ];
-    $data = $this->getPlaintextArray($entry, $properties);
+    $data = $this->getPropArray($entry, $properties);
     $data['type'] = 'entry';
     $data['published'] = $this->getPublished($entry);
     $data['updated'] = $this->getUpdated($entry);
