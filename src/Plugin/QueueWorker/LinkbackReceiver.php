@@ -108,7 +108,7 @@ abstract class LinkbackReceiver extends QueueWorkerBase implements ContainerFact
     $logger = \Drupal::logger('linkback');
     /** @var \Drupal\Core\Entity\EntityInterface|bool $content */
     $content = FALSE;
-    $receive_allowed = TRUE;
+    $received_allowed = TRUE;
 
     $field_type = $this->fieldManager->getFieldMapByFieldType('linkback_handlers');
     foreach ($field_type as $entity_type_id => $field) {
@@ -125,7 +125,7 @@ abstract class LinkbackReceiver extends QueueWorkerBase implements ContainerFact
 
     // First check if there's content to be pinged.
     if (!$content) {
-      $logger->notice('@source mentioned non-existant content: @target.', ['@source' => $data['source'], '@target' => $data['target']]);
+      $logger->notice('@source mentioned non-existent content: @target.', ['@source' => $data['source'], '@target' => $data['target']]);
       return;
     }
     // Check if received is allowed in local content.
@@ -134,7 +134,7 @@ abstract class LinkbackReceiver extends QueueWorkerBase implements ContainerFact
       return;
     }
 
-    // The existant linkbacks with these source and target if any.
+    // The existent linkbacks with these source and target if any.
     $linkbacks = [];
     // Check if linkback exists and attach to event.
     $query = $this->entityQuery->get('linkback');
@@ -190,5 +190,4 @@ abstract class LinkbackReceiver extends QueueWorkerBase implements ContainerFact
     }
     return $response;
   }
-
 }
