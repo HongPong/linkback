@@ -47,7 +47,6 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     $events['linkback_receive'] = [['onLinkbackReceive', -10]];
-
     return $events;
   }
 
@@ -63,10 +62,10 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     }
     drupal_set_message('Event linkback_receive thrown by Subscriber in module linkback_webmention.', 'status', TRUE);
     $linkback = NULL;
-    foreach ($event->getLinkbacks() as $existant_linkback) {
-      $linkback = ($existant_linkback->get('handler')->getString() == "linkback_webmention") ? $existant_linkback : NULL;
+    foreach ($event->getLinkbacks() as $existent_linkback) {
+      $linkback = ($existent_linkback->get('handler')->getString() == "linkback_webmention") ? $existent_linkback : NULL;
     };
-    $this->processWebmention($event->getSource(), $event->getTarget(), $event->getLocalEntity(), $event->getResponse(), $linkback);
+    $this->processWebmentionIntoLinkbackEntity($event->getSource(), $event->getTarget(), $event->getLocalEntity(), $event->getResponse(), $linkback);
   }
 
   /**
@@ -81,15 +80,19 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
    * @param \Psr\Http\Message\ResponseInterface $response
    *   The response fetched from source.
    * @param \Drupal\Core\Entity\EntityInterface|null $linkback
-   *   The existant linkbacks with these source and target if any.
+   *   The existent linkbacks with these source and target if any.
    */
-  public function processWebmention($sourceUrl, $targetUrl, EntityInterface $local_entity, ResponseInterface $response, $linkback) {
+  public function processWebmentionIntoLinkbackEntity($sourceUrl,
+                                                      $targetUrl,
+                                                      EntityInterface $local_entity,
+                                                      ResponseInterface $response,
+                                                      $linkback) {
     $urls = [
       '%source' => $sourceUrl,
       '%target' => $targetUrl,
     ];
     // STEPS: https://www.w3.org/TR/webmention/#request-verification
-    // StEP 1: check if DELETED . If status 410 Gone  -> DELETE EXISTANT.
+    // StEP 1: check if DELETED . If status 410 Gone  -> DELETE existent.
     if ($response->getStatusCode() == 410 && !empty($linkback)) {
       $this->logger->error('Received webmention from %source claims for deleting the mention of target: %target', $urls);
       $linkback->delete();
@@ -115,19 +118,20 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     // Step 5: Get metainfo (h-card, foaf, simple ... ) First try mf2 then rdf,
     // finally: Basic.
     $metainfo = [];
+    $options = []; // empty options array reserved for later
     if ($metainfo = $this->webmentionParser->getMf2Information($body, $sourceUrl)) {
-      $this->logger->notice('Found relevant microformats in source:%source ', ['%source' => $sourceUrl]);
+      $this->logger->notice('Found relevant microformats in source: %source ', ['%source' => $sourceUrl]);
     }
     elseif ($metainfo = $this->webmentionParser->getRdfInformation($body, $targetUrl)) {
-      $this->logger->notice('Found relevant rdf in source:%source ', ['%source' => $sourceUrl]);
+      $this->logger->notice('Found relevant rdf in source: %source ', ['%source' => $sourceUrl]);
     }
     elseif ($metainfo = $this->webmentionParser->getBasicMetainfo($body, $targetUrl)) {
-      $this->logger->notice('Found relevant basic information in source:%source ', ['%source' => $sourceUrl]);
+      $this->logger->notice('Found relevant basic information in source: %source ', ['%source' => $sourceUrl]);
     }
     // At this point we could add basic information fetcher to override the
     // one that will provided the linkback entity presave method,
-    // save using raw linkback funcitonality:
-    $this->saveLinkback($sourceUrl, $targetUrl, $local_entity, $linkback, $metainfo);
+    // save using raw linkback functionality:
+    $this->saveLinkbackEntity($sourceUrl, $targetUrl, $local_entity, $linkback, $metainfo, $options);
 
     if (empty($metainfo)) {
       $this->logger->error('Could not find relevant metainformation in origin @url', ['@url' => $sourceUrl]);
@@ -135,7 +139,7 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Saves the processed webmention to linkback storage.
+   * Saves the processed Webmention to linkback storage.
    *
    * @param string $source
    *   The source Url.
@@ -144,11 +148,13 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
    * @param \Drupal\Core\Entity\EntityInterface $local_entity
    *   The mentioned entity.
    * @param \Drupal\Core\Entity\EntityInterface|null $linkback
-   *   The existant linkbacks with these source and target if any.
+   *   The existent linkbacks with these source and target if any.
    * @param array $metainfo
    *   The metainformation fetched from the source.
+   * @param array $options
+   *   Empty options array reserved for later
    */
-  protected function saveLinkback($source, $target, EntityInterface $local_entity, $linkback, array $metainfo) {
+  protected function saveLinkbackEntity($source, $target, EntityInterface $local_entity, $linkback, array $metainfo, $options = array()) {
     if (empty($linkback)) {
       $linkback = entity_create('linkback', [
         'handler'  => 'linkback_webmention',
@@ -168,7 +174,7 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
       // - author
       // - author_image
       // - author_name
-      $excerpt .= json_encode($metainfo, JSON_PRETTY_PRINT);
+      $excerpt = $this->generateExcerptFromMetadata($metainfo, $excerpt);
       $linkback->setExcerpt($excerpt);
     }
 
@@ -182,8 +188,17 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     }
     catch (LinkbackException $exception){
       $this->logger->error(t('Webmention from @source to @target not registered due to error: %error.', ['@source' => $source, '@target' => $target, '%error' => $exception->getMessage()]));
-
     }
   }
 
+  /**
+   *
+   * @param array $metainfo
+   * @param $excerpt
+   * @return string
+   * todo this could be split into different encoding options by user configured choice
+   */
+  protected function generateExcerptFromMetadata(array $metainfo, $excerpt) {
+    return $excerpt .= json_encode($metainfo, JSON_PRETTY_PRINT);
+  }
 }
