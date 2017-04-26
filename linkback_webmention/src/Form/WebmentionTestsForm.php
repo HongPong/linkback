@@ -126,7 +126,7 @@ class WebmentionTestsForm extends FormBase {
     \Drupal::logger('linkback_webmention')->notice('Trying to do a local target test from ' . $remoteSender . ' to ' . $localTarget);
     // Todo return values should be made useful.
     $testval = linkback_webmention__receive_webmention($remoteSender, $localTarget);
-    kint($testval);
+    //kint($testval); removed Drupal Issue #2866793
     $testmsg = 'Webmention: Tested local target: ' . $testval;
     \Drupal::logger('linkback_webmention')->notice($testmsg);
 
