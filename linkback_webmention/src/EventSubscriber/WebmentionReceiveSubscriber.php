@@ -9,6 +9,7 @@ use Drupal\linkback\Event\LinkbackReceiveEvent;
 use Drupal\linkback\Exception\LinkbackException;
 use Drupal\Core\Entity\EntityInterface;
 use Psr\Http\Message\ResponseInterface;
+
 /**
  * Class WebmentionReceiveSubscriber.
  *
@@ -118,12 +119,15 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     // Step 5: Get metainfo (h-card, foaf, simple ... ) First try mf2 then rdf,
     // finally: Basic.
     $metainfo = [];
-    $options = []; // empty options array reserved for later
+    // Empty options array reserved for later.
+    $options = [];
     if ($metainfo = $this->webmentionParser->getMf2Information($body, $sourceUrl)) {
       $this->logger->notice('Found relevant microformats in source: %source ', ['%source' => $sourceUrl]);
+      $metainfo['parser'] = 'mf2';
     }
     elseif ($metainfo = $this->webmentionParser->getRdfInformation($body, $targetUrl)) {
       $this->logger->notice('Found relevant rdf in source: %source ', ['%source' => $sourceUrl]);
+      $metainfo['parser'] = 'rdf';
     }
     elseif ($metainfo = $this->webmentionParser->getBasicMetainfo($body, $targetUrl)) {
       $this->logger->notice('Found relevant basic information in source: %source ', ['%source' => $sourceUrl]);
@@ -165,17 +169,8 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     }
     if (!empty($metainfo)) {
       $linkback->setTitle($metainfo['name']);
-      $excerpt = "";
-      // WHAT TODO with structured metainfo?
-      // Metainfo array could include:
-      // - updated
-      // - name
-      // - type
-      // - author
-      // - author_image
-      // - author_name
-      $excerpt = $this->generateExcerptFromMetadata($metainfo, $excerpt);
-      $linkback->setExcerpt($excerpt);
+      $serialized_metainfo = $this->serializeMetainfo($metainfo);
+      $linkback->setMetainfo($serialized_metainfo);
     }
 
     try {
@@ -186,19 +181,26 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     catch (EntityStorageException $exception) {
       $this->logger->error(t('Webmention from @source to @target not registered.', ['@source' => $source, '@target' => $target]));
     }
-    catch (LinkbackException $exception){
-      $this->logger->error(t('Webmention from @source to @target not registered due to error: %error.', ['@source' => $source, '@target' => $target, '%error' => $exception->getMessage()]));
+    catch (LinkbackException $exception) {
+      $this->logger->error(t('Webmention from @source to @target not registered due to error: %error.', [
+        '@source' => $source,
+        '@target' => $target,
+        '%error' => $exception->getMessage(),
+      ]));
+
     }
   }
 
   /**
-   *
+   * Serializes metainfo.
    * @param array $metainfo
-   * @param $excerpt
+   *   The parsed metainfo array
    * @return string
-   * todo this could be split into different encoding options by user configured choice
+   * @todo This could be split into different encoding options by user
+   * configured choice.
    */
-  protected function generateExcerptFromMetadata(array $metainfo, $excerpt) {
-    return $excerpt .= json_encode($metainfo, JSON_PRETTY_PRINT);
+  protected function serializeMetainfo(array $metainfo) {
+    $serialized_metainfo = "";
+    return $serialized_metainfo .= json_encode($metainfo, JSON_PRETTY_PRINT);
   }
 }

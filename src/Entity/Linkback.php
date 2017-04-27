@@ -8,6 +8,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\linkback\LinkbackInterface;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Defines the Linkback entity.
@@ -34,6 +35,7 @@ use Drupal\linkback\LinkbackInterface;
  *     },
  *   },
  *   base_table = "linkback",
+ *   fieldable = TRUE,
  *   admin_permission = "administer linkback entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -47,7 +49,8 @@ use Drupal\linkback\LinkbackInterface;
  *     "add-form" = "/admin/content/linkback/add",
  *     "edit-form" = "/admin/content/linkback/{linkback}/edit",
  *     "delete-form" = "/admin/content/linkback/{linkback}/delete",
- *   }
+ *   },
+ *   field_ui_base_route = "entity.linkback_type.edit_form"
  * )
  */
 class Linkback extends ContentEntityBase implements LinkbackInterface {
@@ -59,12 +62,12 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
-    $values += array(
+    $values += [
       'status' => 1,
       'type' => 'received',
       'created' => time(),
       'updated' => time(),
-    );
+    ];
   }
 
   /**
@@ -94,6 +97,21 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
    */
   public function setExcerpt($excerpt) {
     $this->set('excerpt', $excerpt);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMetainfo() {
+    return $this->get('metainfo')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMetainfo($metainfo) {
+    $this->set('metainfo', $metainfo);
     return $this;
   }
 
@@ -210,10 +228,10 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Linkback entity.'))
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'language_select',
         'weight' => 10,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['type'] = BaseFieldDefinition::create('string')
@@ -234,19 +252,19 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
       ->setDescription(t('The title of the Linkback entity.'))
-      ->setSettings(array(
+      ->setSettings([
         'max_length' => 255,
-      ))
+      ])
       ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'string',
         'weight' => -5,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE)
       ->setRequired(TRUE);
@@ -255,36 +273,53 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
       ->setLabel(t('Excerpt'))
       ->setDescription(t("Excerpt of the third-party's post."))
       ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'string',
         'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE)
       ->setRequired(TRUE);
+
+    $fields['metainfo'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('Metainfo'))
+      ->setDescription(t("Metainfo of the third-party's post."))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -4,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRequired(FALSE);
 
     $fields['handler'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Handler'))
       ->setDescription(t("The handler for this linkback."))
       ->setRequired(TRUE)
-      ->setSettings(array(
+      ->setSettings([
         'max_length' => 255,
-      ))
+      ])
       ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'inline',
         'type' => 'string',
         'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
@@ -292,19 +327,19 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
       ->setLabel(t('Origin'))
       ->setDescription(t('Identifier of the origin, such as an IP address or hostname.'))
       ->setDefaultValue(0)
-      ->setSettings(array(
+      ->setSettings([
         'max_length' => 255,
-      ))
+      ])
       ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'inline',
         'type' => 'string',
         'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
@@ -342,7 +377,7 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
       }
       if ($this->validate()->getByFields(['title'])->count() == 1 || $this->validate()->getByFields(['excerpt'])->count() == 1) {
         try {
-          $local_url =  \Drupal::service('linkback.default')->getLocalUrl($this->getRefContent());
+          $local_url = \Drupal::service('linkback.default')->getLocalUrl($this->getRefContent());
           $data = \Drupal::service('linkback.default')->getRemoteData($this->getRefContent(), $this->getUrl(), $local_url);
           list($title, $excerpt) = $data;
           if (empty($this->getTitle())) {
@@ -366,6 +401,56 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
 
     }
     $this->setOrigin(\Drupal::request()->getClientIP());
+
+    if (!empty($this->getMetainfo())) {
+      // If json in getMetainfo fill the mapped values in custom fields.
+      $metainfo = json_decode($this->getMetainfo(), TRUE);
+      $parser = $metainfo['parser'];
+      $fields_config = array_filter($this->fieldDefinitions, function ($element) {
+        return $element instanceof FieldConfig;
+      });
+      foreach ($fields_config as $field_config) {
+        $this->setFieldFromMetainfo($field_config, $metainfo, $parser);
+      }
+    }
+  }
+
+  /**
+   * Set field based on the values of metainfo field and mapping setting.
+   *
+   * @param \Drupal\field\Entity\FieldConfig $definition
+   *   The definition of the field.
+   * @param array $metainfo
+   *   The metainfo coming from json string stored in metainfo field.
+   * @param string $parser
+   *   The parser description name.
+   */
+  protected function setFieldFromMetainfo(FieldConfig $definition, array $metainfo, $parser) {
+    $property_path = $definition->getThirdPartySetting('linkback', $parser . '_mapping');
+    if (!$property_path) {
+      return;
+    }
+    // Get the  value specified in mapping field.
+    $properties = explode("/", $property_path);
+    $pathfinder = $metainfo;
+    foreach ($properties as $property) {
+      $pathfinder = isset($pathfinder[$property]) ? $pathfinder[$property] : NULL;
+    }
+
+    if (is_string($pathfinder)) {
+      $field_name = $definition->get('field_name');
+      $allowed_types = [
+        'string',
+        'string_long',
+        'text',
+        'text_long',
+        'text_with_summary',
+        'link',
+      ];
+      if (in_array($definition->getType(), $allowed_types)) {
+        $this->set($field_name, $pathfinder);
+      }
+    }
   }
 
 }

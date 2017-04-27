@@ -55,6 +55,25 @@ interface LinkbackInterface extends ContentEntityInterface, EntityChangedInterfa
   public function setExcerpt($excerpt);
 
   /**
+   * Gets the Linkback metainfo.
+   *
+   * @return string
+   *   Metainfo of the Linkback.
+   */
+  public function getMetainfo();
+
+  /**
+   * Sets the Linkback metainfo.
+   *
+   * @param string $metainfo
+   *   The Linkback metainfo.
+   *
+   * @return \Drupal\linkback\LinkbackInterface
+   *   The called Linkback entity.
+   */
+  public function setMetainfo($metainfo);
+
+  /**
    * Gets the Linkback origin.
    *
    * @return string

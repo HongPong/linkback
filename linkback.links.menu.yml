@@ -4,3 +4,10 @@ linkback.settings:
   description: 'Configure linkbacks.'
   parent: system.admin_config_services
   weight: 99
+entity.linkback_type.edit_form:
+  title: 'Linkback'
+  route_name: entity.linkback_type.edit_form
+  description: 'Configure Linkback entity'
+  parent: system.admin_structure
+  weight: 99
+

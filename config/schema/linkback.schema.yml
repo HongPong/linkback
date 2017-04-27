@@ -1,0 +1,10 @@
+field.field.linkback.*.*.third_party.linkback:
+  type: mapping
+  label: Linkback mapping
+  mapping:
+    mf2_mapping:
+      type: string
+      label: 'Microformats mapping'
+    rdf_mapping:
+      type: string
+      label: 'RDF mapping'

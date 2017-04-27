@@ -38,3 +38,19 @@ linkback.admin_settings:
     _title: 'Linkback settings'
   requirements:
     _permission: 'administer linkback'
+
+entity.linkback_type.edit_form:
+  path: '/admin/structure/linkback/manage'
+  defaults:
+    _form: '\Drupal\linkback\Form\LinkbackFieldsSettingsForm'
+    _title: 'Edit'
+  requirements:
+    _permission: 'administer linkback'
+
+linkback.mappings.mf2:
+  path: '/admin/structure/linkback/manage/mapping_mf2'
+  defaults:
+    _form: '\Drupal\linkback\Form\MappingMf2Form'
+    _title: 'Mf2 mapping'
+  requirements:
+    _permission: 'administer linkback'

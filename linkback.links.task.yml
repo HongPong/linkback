@@ -1,3 +1,12 @@
+entity.linkback_type.edit_form:
+  title: 'Edit'
+  route_name: entity.linkback_type.edit_form
+  base_route: entity.linkback_type.edit_form
+linkback.mappings.mf2:
+  title: 'Mapping mf2'
+  route_name: linkback.mappings.mf2
+  base_route: entity.linkback_type.edit_form
+  weight: 10
 linkback.admin_settings:
   title: 'Settings'
   route_name: linkback.admin_settings

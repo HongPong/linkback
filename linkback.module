@@ -5,6 +5,7 @@
  * Contains linkback.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
@@ -68,4 +69,46 @@ function linkback_entity_insert(EntityInterface $entity) {
  */
 function linkback_entity_update(EntityInterface $entity) {
   linkback_entity_insert($entity);
+}
+
+/**
+ * Implements hook_form_FORM_ID_form_alter().
+ */
+function linkback_form_field_config_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Field\FieldConfigInterface $field */
+  $field = $form_state->getFormObject()->getEntity();
+  $allowed_types = [
+    'string',
+    'string_long',
+    'text',
+    'text_long',
+    'text_with_summary',
+    'link',
+  ];
+
+  if (in_array($field->getType(), $allowed_types)) {
+    $form['third_party_settings']['linkback'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Linkback mappings'),
+    ];
+    $form['third_party_settings']['linkback']['mf2_mapping'] = [
+      '#type' => 'textfield',
+      '#title' => t('Mapped microformat property'),
+      '#placeholder' => 'author/thumbnail',
+      '#default_value' => $field->getThirdPartySetting('linkback', 'mf2_mapping'),
+      '#description' => t('If the key defined is in the parsed metainfo json object,
+      the pointed value will be defined in this field when processing linkback.The property
+      must be separated by "/" if any depth is needed.'),
+    ];
+    $form['third_party_settings']['linkback']['rdf_mapping'] = [
+      '#type' => 'textfield',
+      '#title' => t('Mapped RDF property'),
+      '#placeholder' => 'author/thumbnail',
+      '#default_value' => $field->getThirdPartySetting('linkback', 'rdf_mapping'),
+      '#description' => t('If the key defined is in the parsed metainfo json object,
+      the pointed value will be defined in this field when processing linkback.The property
+      must be separated by "/" if any depth is needed.'),
+    ];
+
+  }
 }
