@@ -81,25 +81,25 @@ class ConfirmDeleteMultiple extends ConfirmFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $edit = $form_state->getUserInput();
 
-    $form['linkbacks'] = array(
+    $form['linkbacks'] = [
       '#prefix' => '<ul>',
       '#suffix' => '</ul>',
       '#tree' => TRUE,
-    );
+    ];
     // array_filter() returns only elements with actual values.
     $linkback_counter = 0;
     $this->linkbacks = $this->linkbackStorage->loadMultiple(array_keys(array_filter($edit['linkbacks'])));
     foreach ($this->linkbacks as $linkback) {
       $lid = $linkback->id();
-      $form['linkbacks'][$lid] = array(
+      $form['linkbacks'][$lid] = [
         '#type' => 'hidden',
         '#value' => $lid,
         '#prefix' => '<li>',
         '#suffix' => Html::escape($linkback->label()) . '</li>',
-      );
+      ];
       $linkback_counter++;
     }
-    $form['operation'] = array('#type' => 'hidden', '#value' => 'delete');
+    $form['operation'] = ['#type' => 'hidden', '#value' => 'delete'];
 
     if (!$linkback_counter) {
       drupal_set_message($this->t('There do not appear to be any linkbacks to delete, or your selected linkback was deleted by another administrator.'));
@@ -116,7 +116,7 @@ class ConfirmDeleteMultiple extends ConfirmFormBase {
     if ($form_state->getValue('confirm')) {
       $this->linkbackStorage->delete($this->linkbacks);
       $count = count($form_state->getValue('linkbacks'));
-      $this->logger('content')->notice('Deleted @count linkbacks.', array('@count' => $count));
+      $this->logger('content')->notice('Deleted @count linkbacks.', ['@count' => $count]);
       drupal_set_message($this->formatPlural($count, 'Deleted 1 linkback.', 'Deleted @count linkbacks.'));
     }
     $form_state->setRedirectUrl($this->getCancelUrl());

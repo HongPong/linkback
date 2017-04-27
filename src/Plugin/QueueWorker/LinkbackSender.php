@@ -128,7 +128,7 @@ abstract class LinkbackSender extends QueueWorkerBase implements ContainerFactor
    */
   protected function getBodyUrls($body) {
     $crawler = new Crawler($body);
-    return array_unique($crawler->filter("a[href]")->extract(array('href')));
+    return array_unique($crawler->filter("a[href]")->extract(['href']));
   }
 
 }

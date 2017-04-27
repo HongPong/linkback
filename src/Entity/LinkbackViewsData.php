@@ -15,11 +15,11 @@ class LinkbackViewsData extends EntityViewsData implements EntityViewsDataInterf
    */
   public function getViewsData() {
     $data = parent::getViewsData();
-    $data['linkback']['table']['base'] = array(
+    $data['linkback']['table']['base'] = [
       'field' => 'id',
       'title' => $this->t('Linkback'),
       'help' => $this->t('The Linkback ID.'),
-    );
+    ];
     return $data;
   }
 

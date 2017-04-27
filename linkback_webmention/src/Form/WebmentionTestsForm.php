@@ -52,7 +52,7 @@ class WebmentionTestsForm extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Test remote URL'),
       '#button_type' => 'primary',
-      //'#submit' => ['::testRemoteURL'],
+      // '#submit' => ['::testRemoteURL'],
         // '#disabled' => $queue->numberOfItems() < 1,.
     ];
     $form['actions']['delete'] = [
@@ -126,7 +126,7 @@ class WebmentionTestsForm extends FormBase {
     \Drupal::logger('linkback_webmention')->notice('Trying to do a local target test from ' . $remoteSender . ' to ' . $localTarget);
     // Todo return values should be made useful.
     $testval = linkback_webmention__receive_webmention($remoteSender, $localTarget);
-    //kint($testval); removed Drupal Issue #2866793
+    // kint($testval); removed Drupal Issue #2866793.
     $testmsg = 'Webmention: Tested local target: ' . $testval;
     \Drupal::logger('linkback_webmention')->notice($testmsg);
 

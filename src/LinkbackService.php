@@ -9,6 +9,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\linkback\Exception\LinkbackException;
 use Psr\Log\LoggerInterface;
+
 /**
  * Class LinkbackService.
  *
@@ -135,16 +136,16 @@ class LinkbackService {
   public function getRemoteData($nid, $pagelinkedfrom, $pagelinkedto) {
     try {
       $client = $this->httpClientFactory->fromOptions();
-      $response = $client->get($pagelinkedfrom, array('headers' => array('Accept' => 'text/plain')));
+      $response = $client->get($pagelinkedfrom, ['headers' => ['Accept' => 'text/plain']]);
       $data = $response->getBody(TRUE);
     }
     catch (BadResponseException $exception) {
       $response = $exception->getResponse();
-      $this->logger->error(t('Failed to fetch url due to HTTP error "%error"', array('%error' => $response->getStatusCode() . ' ' . $response->getReasonPhrase())), 'error');
+      $this->logger->error(t('Failed to fetch url due to HTTP error "%error"', ['%error' => $response->getStatusCode() . ' ' . $response->getReasonPhrase()]), 'error');
       throw $exception;
     }
     catch (RequestException $exception) {
-      $this->logger->error(t('Failed to fetch url due to error "%error"', array('%error' => $exception->getMessage())), 'error');
+      $this->logger->error(t('Failed to fetch url due to error "%error"', ['%error' => $exception->getMessage()]), 'error');
       throw $exception;
     }
 

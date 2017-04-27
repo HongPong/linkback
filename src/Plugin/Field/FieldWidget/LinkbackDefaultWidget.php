@@ -44,7 +44,7 @@ class LinkbackDefaultWidget extends WidgetBase implements ContainerFactoryPlugin
       $plugin_definition,
       $field_definition,
       $settings,
-      array()
+      []
     );
     $this->currentUser = $current_user;
   }
@@ -93,27 +93,27 @@ class LinkbackDefaultWidget extends WidgetBase implements ContainerFactoryPlugin
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = [];
 
-    $elements['linkback_send'] = array(
+    $elements['linkback_send'] = [
       '#type' => 'checkbox',
       '#title' => t('Send linkbacks'),
       '#default_value' => isset($items->linkback_send) ? $items->linkback_send : TRUE,
       '#access' => $this->currentUser->hasPermission('toggle linkback send option on content'),
-    );
-    $elements['linkback_receive'] = array(
+    ];
+    $elements['linkback_receive'] = [
       '#type' => 'checkbox',
       '#title' => t('Receive linkbacks'),
       '#default_value' => isset($items->linkback_receive) ? $items->linkback_receive : TRUE,
       '#access' => $this->currentUser->hasPermission('toggle linkback receive option on content'),
-    );
+    ];
     // If the advanced settings tabs-set is available (normally rendered in the
     // second column on wide-resolutions), place the field as a details element
     // in this tab-set.
     if (isset($form['advanced'])) {
-      $elements += array(
+      $elements += [
         '#title' => t('Linkbacks'),
         '#type' => 'details',
         '#group' => 'advanced',
-      );
+      ];
     }
 
     return $elements;

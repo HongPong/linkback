@@ -62,11 +62,11 @@ class LinkbackSettingsForm extends ConfigFormBase {
     /** @var QueueInterface $queue */
     $queue_send = $queue_factory->get($config->get('use_cron_send') ? 'cron_linkback_sender' : 'manual_linkback_sender');
     if ($queue_send->numberOfItems() > 0) {
-      $form_state->setErrorByName('use_cron_send', t('Could not change this options as @qitems items remain in sending queue, run or remove these in queue tab', array('@qitems' => $queue_send->numberOfItems())));
+      $form_state->setErrorByName('use_cron_send', t('Could not change this options as @qitems items remain in sending queue, run or remove these in queue tab', ['@qitems' => $queue_send->numberOfItems()]));
     }
     $queue_received = $queue_factory->get($config->get('use_cron_received') ? 'cron_linkback_receiver' : 'manual_linkback_receiver');
     if ($queue_received->numberOfItems() > 0) {
-      $form_state->setErrorByName('use_cron_received', t('Could not change this options as @qitems items remain in received queue, run or remove these in queue tab', array('@qitems' => $queue_received->numberOfItems())));
+      $form_state->setErrorByName('use_cron_received', t('Could not change this options as @qitems items remain in received queue, run or remove these in queue tab', ['@qitems' => $queue_received->numberOfItems()]));
     }
 
   }

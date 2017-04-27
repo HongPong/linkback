@@ -96,19 +96,19 @@ class UnregisteredLinkbackConstraintValidator extends ConstraintValidator implem
     // Do not allow duplicated linkback registration.
     if (isset($source_uri) && isset($target_id)) {
       $linkbacks = $this->linkbackStorage->loadByProperties(
-        array(
+        [
           'url' => $source_uri,
           'ref_content' => $target_id,
-        )
+        ]
       );
 
       if (!empty($linkbacks)) {
         $this->context->buildViolation(
           $constraint->linkbackRegistered,
-          array(
+          [
             '%url' => $source_uri,
             '%ref_content' => $target_id,
-          )
+          ]
         )
           ->setCause((string) t('The ref-back has previously been registered.'))
           ->setCode(LINKBACK_ERROR_REFBACK_ALREADY_REGISTERED)
@@ -136,9 +136,9 @@ class UnregisteredLinkbackConstraintValidator extends ConstraintValidator implem
         // Content doesn't exists or receive not allowed.
         $this->context->buildViolation(
           $constraint->linkbackDisabled,
-          array(
+          [
             '%ref_content' => $target_id,
-          )
+          ]
         )
           ->setCause((string) t('The ref-back is not allowed or is misconfigured.'))
           ->setCode(LINKBACK_ERROR_LOCAL_NODE_REFBACK_NOT_ALLOWED)

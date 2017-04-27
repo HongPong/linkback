@@ -9,4 +9,3 @@ services:
     arguments: ['@logger.channel.linkback', '@linkback.default']
     tags:
       - { name: event_subscriber }
-

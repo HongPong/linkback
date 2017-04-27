@@ -27,6 +27,11 @@ define('LINKBACK_ERROR_REMOTE_URL_MISSING_LINK', 4);
 
 /**
  * Implements hook_help().
+ *
+ * @param $route_name
+ * @param $route_match
+ *
+ * @return string
  */
 function linkback_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
@@ -38,6 +43,9 @@ function linkback_help($route_name, RouteMatchInterface $route_match) {
       return $output;
 
     default:
+      $output = '';
+      return $output;
+
   }
 }
 
@@ -66,6 +74,8 @@ function linkback_entity_insert(EntityInterface $entity) {
 
 /**
  * Implements hook_ENTITY_TYPE_update().
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  */
 function linkback_entity_update(EntityInterface $entity) {
   linkback_entity_insert($entity);
@@ -73,6 +83,9 @@ function linkback_entity_update(EntityInterface $entity) {
 
 /**
  * Implements hook_form_FORM_ID_form_alter().
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  */
 function linkback_form_field_config_edit_form_alter(array &$form, FormStateInterface $form_state) {
   /** @var \Drupal\Core\Field\FieldConfigInterface $field */

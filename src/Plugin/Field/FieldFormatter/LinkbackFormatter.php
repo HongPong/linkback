@@ -28,18 +28,18 @@ class LinkbackFormatter extends FormatterBase {
    * TODO ALLOW OTHER LINKBACKS HANDLERS.
    */
   public static function defaultSettings() {
-    return array(
+    return [
       // Implement default settings.
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    return array(
+    return [
       // Implement settings form.
-    ) + parent::settingsForm($form, $form_state);
+    ] + parent::settingsForm($form, $form_state);
   }
 
   /**

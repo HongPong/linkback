@@ -36,18 +36,18 @@ class LinkbackHandlerItem extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    $schema = array(
-      'columns' => array(
-        'linkback_receive' => array(
+    $schema = [
+      'columns' => [
+        'linkback_receive' => [
           'type' => 'int',
           'size' => 'tiny',
-        ),
-        'linkback_send' => array(
+        ],
+        'linkback_send' => [
           'type' => 'int',
           'size' => 'tiny',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
     return $schema;
   }
 

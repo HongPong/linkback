@@ -156,9 +156,9 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
    * @param array $metainfo
    *   The metainformation fetched from the source.
    * @param array $options
-   *   Empty options array reserved for later
+   *   Empty options array reserved for later.
    */
-  protected function saveLinkbackEntity($source, $target, EntityInterface $local_entity, $linkback, array $metainfo, $options = array()) {
+  protected function saveLinkbackEntity($source, $target, EntityInterface $local_entity, $linkback, array $metainfo, $options = []) {
     if (empty($linkback)) {
       $linkback = entity_create('linkback', [
         'handler'  => 'linkback_webmention',
@@ -193,9 +193,12 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
 
   /**
    * Serializes metainfo.
+   *
    * @param array $metainfo
-   *   The parsed metainfo array
+   *   The parsed metainfo array.
+   *
    * @return string
+   *
    * @todo This could be split into different encoding options by user
    * configured choice.
    */
@@ -203,4 +206,5 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     $serialized_metainfo = "";
     return $serialized_metainfo .= json_encode($metainfo, JSON_PRETTY_PRINT);
   }
+
 }

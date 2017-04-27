@@ -401,4 +401,3 @@ Paths to config and queue control areas.
 ### linkback.services.yml
 * logger.channel.linkback
 * linkback.default
-

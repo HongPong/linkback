@@ -18,14 +18,14 @@ class LinkbackSenderQueueForm extends FormBase {
   /**
    * The queue factory.
    *
-   * @var QueueFactory
+   * @var \Drupal\Core\Queue\QueueFactory
    */
   protected $queueFactory;
 
   /**
    * The quqeue manager.
    *
-   * @var QueueWorkerManagerInterface
+   * @var \Drupal\Core\Queue\QueueWorkerManagerInterface
    */
   protected $queueManager;
 
@@ -85,25 +85,25 @@ class LinkbackSenderQueueForm extends FormBase {
     /** @var \Drupal\Core\Queue\QueueInterface $queue */
     $queue = $this->queueFactory->get($this->getQueue());
 
-    $form['help'] = array(
+    $form['help'] = [
       '#type' => 'markup',
-      '#markup' => $this->t('Submitting this form will process the "@queue" queue which contains @number items.', array('@queue' => $this->getQueue(), '@number' => $queue->numberOfItems())),
-    );
+      '#markup' => $this->t('Submitting this form will process the "@queue" queue which contains @number items.', ['@queue' => $this->getQueue(), '@number' => $queue->numberOfItems()]),
+    ];
     $form['actions']['#type'] = 'actions';
 
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Process queue'),
       '#button_type' => 'primary',
       '#disabled' => $queue->numberOfItems() < 1,
-    );
-    $form['actions']['delete'] = array(
+    ];
+    $form['actions']['delete'] = [
       '#type' => 'submit',
       '#value' => $this->t('Delete queue'),
       '#button_type' => 'secondary',
-      '#submit' => array('::deleteQueue'),
+      '#submit' => ['::deleteQueue'],
       '#disabled' => $queue->numberOfItems() < 1,
-    );
+    ];
     return $form;
   }
 

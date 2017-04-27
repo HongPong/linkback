@@ -44,17 +44,17 @@ function linkback_webmention_node_view(array &$build,
                                        EntityViewDisplayInterface $display,
                                        $view_mode) {
   // @TODO: configurable view-modes?
-  // TODO not only node. allow another entities to use linkbacks.#notonlynode 
+  // TODO not only node. allow another entities to use linkbacks.#notonlynode
   if ($view_mode == 'full' /*&& linkback_node_allows_linkback($node, 'receive')*/) {
-    $webmention_endpoint =  Url::fromRoute('linkback_webmention.node_endpoint', ['node' => $entity->id()], ['absolute' => TRUE])->toString();
-    $webmention_link = array(
+    $webmention_endpoint = Url::fromRoute('linkback_webmention.node_endpoint', ['node' => $entity->id()], ['absolute' => TRUE])->toString();
+    $webmention_link = [
       '#type' => 'html_tag',
       '#tag' => 'link',
-      '#attributes' => array(
+      '#attributes' => [
         'rel' => 'webmention',
         'href' => $webmention_endpoint,
-      ),
-    );
+      ],
+    ];
     $build['#attached']['html_head'][] = [$webmention_link, 'linkback_webmention'];
   }
 }

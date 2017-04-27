@@ -102,7 +102,7 @@ class PingbackReceiveSubscriber implements EventSubscriberInterface {
     }
     // Step 4: check if $response body has target url.
     $body = (string) $response->getBody();
-    //TODO refactor this getTitleExcerpt when Service has stable methods.
+    // TODO refactor this getTitleExcerpt when Service has stable methods.
     $title_excerpt = $this->linkbackService->getTitleExcerpt($local_entity->id(), $body);
     if (!$title_excerpt) {
       return;

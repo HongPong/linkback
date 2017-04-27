@@ -103,67 +103,67 @@ class LinkbackAdminOverview extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, $type = 'local') {
 
     // Build an 'Update options' form.
-    $form['options'] = array(
+    $form['options'] = [
       '#type' => 'details',
       '#title' => $this->t('Update options'),
       '#open' => TRUE,
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'container-inline',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     $options['publish'] = $this->t('Publish the selected linkbacks');
     $options['unpublish'] = $this->t('Unpublish the selected linkbacks');
 
-    $form['options']['operation'] = array(
+    $form['options']['operation'] = [
       '#type' => 'select',
       '#title' => $this->t('Action'),
       '#title_display' => 'invisible',
       '#options' => $options,
       '#default_value' => 'publish',
-    );
-    $form['options']['submit'] = array(
+    ];
+    $form['options']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Update'),
-    );
+    ];
 
-    $header = array(
-      'title' => array(
+    $header = [
+      'title' => [
         'data' => $this->t('Title'),
         'specifier' => 'title',
-      ),
-      'excerpt' => array(
+      ],
+      'excerpt' => [
         'data' => $this->t('Excerpt'),
         'specifier' => 'excerpt',
-        'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
-      ),
-      'origin' => array(
+        'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+      ],
+      'origin' => [
         'data' => $this->t('Origin'),
         'specifier' => 'excerpt',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'handler' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'handler' => [
         'data' => $this->t('Handler'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'ref_content' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'ref_content' => [
         'data' => $this->t('Local content'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'url' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'url' => [
         'data' => $this->t('Remote content'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'changed' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'changed' => [
         'data' => $this->t('Changed date'),
         'specifier' => 'created',
         'sort' => 'desc',
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
       'operations' => $this->t('Operations'),
-    );
+    ];
 
     $type = ($type == 'received') ? LinkbackInterface::RECEIVED : LinkbackInterface::SENT;
     $lids = $this->linkbackStorage->getQuery()
@@ -176,11 +176,11 @@ class LinkbackAdminOverview extends FormBase {
     $linkbacks = $this->linkbackStorage->loadMultiple($lids);
 
     // Build a table listing the appropriate linkbacks.
-    $options = array();
+    $options = [];
     $destination = $this->getDestinationArray();
     foreach ($linkbacks as $linkback) {
       /* @var $linkback \Drupal\Core\Entity\EntityInterface */
-      $options[$linkback->id()] = array(
+      $options[$linkback->id()] = [
         'title' => $linkback->getTitle(),
         'excerpt' => $linkback->getExcerpt(),
         'origin' => $linkback->getOrigin(),
@@ -191,32 +191,32 @@ class LinkbackAdminOverview extends FormBase {
           $linkback->getChangedTime(),
           'short'
         ),
-      );
+      ];
 
       $linkback_uri_options = $linkback->urlInfo()->getOptions() + ['query' => $destination];
-      $links = array();
-      $links['edit'] = array(
+      $links = [];
+      $links['edit'] = [
         'title' => $this->t('Edit'),
         'url' => $linkback->urlInfo('edit-form', $linkback_uri_options),
-      );
-      $links['delete'] = array(
+      ];
+      $links['delete'] = [
         'title' => $this->t('Delete'),
         'url' => $linkback->urlInfo('delete-form', $linkback_uri_options),
-      );
-      $options[$linkback->id()]['operations']['data'] = array(
+      ];
+      $options[$linkback->id()]['operations']['data'] = [
         '#type' => 'operations',
         '#links' => $links,
-      );
+      ];
     }
 
-    $form['linkbacks'] = array(
+    $form['linkbacks'] = [
       '#type' => 'tableselect',
       '#header' => $header,
       '#options' => $options,
       '#empty' => $this->t('No linkbacks available.'),
-    );
+    ];
 
-    $form['pager'] = array('#type' => 'pager');
+    $form['pager'] = ['#type' => 'pager'];
 
     return $form;
   }
@@ -225,7 +225,7 @@ class LinkbackAdminOverview extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $form_state->setValue('linkbacks', array_diff($form_state->getValue('linkbacks'), array(0)));
+    $form_state->setValue('linkbacks', array_diff($form_state->getValue('linkbacks'), [0]));
     // We can't execute any 'Update options' if no linkbacks were selected.
     if (count($form_state->getValue('linkbacks')) == 0) {
       $form_state->setErrorByName('', $this->t('Select one or more linkbacks to perform the update on.'));
