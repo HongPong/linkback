@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Render\Element;
 
 // User-agent used when extracting titles and excerpts.
 define('LINKBACK_UA', 'Drupal Linkback (+http://drupal.org/project/linkback)');
@@ -124,4 +125,34 @@ function linkback_form_field_config_edit_form_alter(array &$form, FormStateInter
     ];
 
   }
+}
+
+/**
+ * Prepares variables for linkback templates.
+ *
+ * Default template: linkback.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - linkback: The linkback object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function template_preprocess_linkback(&$variables) {
+  // Helpful $content variable for templates.
+  $variables += array('content' => array());
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function linkback_theme() {
+  return array(
+    'linkback' => array(
+      'render element' => 'elements',
+    )
+  );
 }
