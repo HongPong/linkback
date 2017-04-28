@@ -247,7 +247,18 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
     $fields['url'] = BaseFieldDefinition::create('uri')
       ->setLabel(t('URL'))
       ->setDescription(t('The fully-qualified URL of the remote url.'))
-      ->setRequired(TRUE);
+      ->setRequired(TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'link',
+        'weight' => -4,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'link',
+        'weight' => -4,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
