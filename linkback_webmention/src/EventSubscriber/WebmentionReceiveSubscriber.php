@@ -111,7 +111,7 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
     }
     // Step 4: check if $response body has target url.
     $body = (string) $response->getBody();
-    if (!$this->webmentionParser->hasLink($targetUrl, $body)) {
+    if ($this->webmentionParser->hasLink($targetUrl, $body) === FALSE) {
       $this->logger->notice('Received webmention linkback source: %source hasn\'t link to target: %target ', $urls);
       return;
     };
@@ -168,7 +168,12 @@ class WebmentionReceiveSubscriber implements EventSubscriberInterface {
       ]);
     }
     if (!empty($metainfo)) {
-      $linkback->setTitle($metainfo['name']);
+      $title = (isset($metainfo['name'])) ? $metainfo['name'] : "untitled";
+      // As we must deal with rich and sometimes empty likes or favs fill
+      // excerpt to deal with excerpt strict validation.
+      $excerpt = (isset($metainfo['summary'])) ? $metainfo['summary'] : "No excerpt";
+      $linkback->setTitle($title);
+      $linkback->setExcerpt($excerpt);
       $serialized_metainfo = $this->serializeMetainfo($metainfo);
       $linkback->setMetainfo($serialized_metainfo);
     }
