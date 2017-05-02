@@ -105,6 +105,7 @@ abstract class LinkbackReceiver extends QueueWorkerBase implements ContainerFact
    * {@inheritdoc}
    */
   public function processItem($data) {
+    // @todo check data fetch_counter as https://www.drupal.org/node/2874748
     $logger = \Drupal::logger('linkback');
     /** @var \Drupal\Core\Entity\EntityInterface|bool $content */
     $content = FALSE;

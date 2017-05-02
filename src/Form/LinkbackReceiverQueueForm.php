@@ -136,6 +136,8 @@ class LinkbackReceiverQueueForm extends FormBase {
       }
       catch (\Exception $e) {
         watchdog_exception('linkback', $e);
+        // @todo increase the counter try https://www.drupal.org/node/2874748
+        $queue->releaseItem($item);
       }
     }
   }

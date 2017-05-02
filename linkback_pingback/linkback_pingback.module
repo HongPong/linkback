@@ -124,6 +124,7 @@ function linkback_pingback__receive_pingback($source_uri, $target_uri) {
       "target" => $target_uri,
       "source" => $source_uri,
       "handler" => "linkback_pingback",
+      "fetch_counter" => 0
     ]);
     // Not following the pingback spec as a
     // fake register will be returned.

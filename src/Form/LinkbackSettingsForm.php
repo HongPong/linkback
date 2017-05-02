@@ -45,6 +45,9 @@ class LinkbackSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Check received linkbacks with cron.') ,
       '#default_value' => $config->get('use_cron_received'),
     ];
+    // @todo add fetch counter field https://www.drupal.org/node/2874748
+    // @todo add length of excerpt field https://www.drupal.org/node/2874801
+    // @todo add size limit of fetched data https://www.drupal.org/node/2874801
     return parent::buildForm($form, $form_state);
   }
 

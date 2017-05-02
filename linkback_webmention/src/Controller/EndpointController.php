@@ -105,6 +105,7 @@ class EndpointController extends ControllerBase {
         "target" => $target,
         "source" => $source,
         "handler" => "linkback_webmention",
+        "fetch_counter" => 0
       ]);
     }
     return $element;

@@ -174,6 +174,7 @@ class LinkbackService {
    *   An array with title and excerpt or FALSE in case of problems.
    */
   public function getTitleExcerpt($nid, $data) {
+    $this->crawler->clear();
     $this->crawler->addContent($data);
 
     /* Excerpt part */
