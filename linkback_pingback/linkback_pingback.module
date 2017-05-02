@@ -81,15 +81,20 @@ function linkback_pingback__receive_pingback($source_uri, $target_uri) {
   // If target_uri is published in es and you connect to web in en ,
   // Url::fromuserinput will not obtain the content id (nid).
   // For a case where field translate is used it's not problematic...
-  global $base_url;
+  global $base_secure_url;
+  global $base_insecure_url;
   try {
-    $alias = str_replace($base_url, "", $target_uri);
+    $alias = str_replace($base_secure_url, "", $target_uri);
 
     $langs = Drupal::languageManager()->getLanguages();
     foreach ($langs as $lan) {
       // Iterate over all languages to get entity id,
       // here we can obtain entity type.
-      $route_params = Url::fromUserInput(str_replace($base_url, "", $target_uri), ['language' => $lan])->getRouteParameters();
+      try{
+        $route_params = Url::fromUserInput(str_replace($base_secure_url, "", $target_uri), ['language' => $lan])->getRouteParameters();
+      }catch (InvalidArgumentException $exception){
+        $route_params = Url::fromUserInput(str_replace($base_insecure_url, "", $target_uri), ['language' => $lan])->getRouteParameters();
+      }
       foreach ($route_params as $entity_type => $entity_id) {
         // VALID ONLY FOR FIELD translate
         // (as node translate has various nids for set).
