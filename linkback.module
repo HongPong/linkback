@@ -91,6 +91,9 @@ function linkback_entity_update(EntityInterface $entity) {
 function linkback_form_field_config_edit_form_alter(array &$form, FormStateInterface $form_state) {
   /** @var \Drupal\Core\Field\FieldConfigInterface $field */
   $field = $form_state->getFormObject()->getEntity();
+  if ($field->getTargetEntityTypeId() != 'linkback') {
+    return;
+  }
   $allowed_types = [
     'string',
     'string_long',
