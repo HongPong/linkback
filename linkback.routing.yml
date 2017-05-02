@@ -46,4 +46,3 @@ entity.linkback_type.edit_form:
     _title: 'Edit'
   requirements:
     _permission: 'administer linkback'
-

@@ -96,11 +96,11 @@ class LinkbackWebmentionParser {
       $needle = $links->text();
       // First bet for p parent.
       $context_node = $links->parents()->first()->filter('p');
-      if (iterator_count($context_node) < 1){
+      if (iterator_count($context_node) < 1) {
         // If not existing try div.
         $context_node = $links->parents()->first()->filter('div');
       }
-      if (iterator_count($context_node) < 1){
+      if (iterator_count($context_node) < 1) {
         // No tag found get the first found.
         $context_node = $links->parents()->first();
       }
@@ -109,16 +109,18 @@ class LinkbackWebmentionParser {
       // No link with that href -> spam behavior.
       return FALSE;
     }
-    if (iterator_count($context_node) > 0){
-      if (empty($needle)){
+    if (iterator_count($context_node) > 0) {
+      if (empty($needle)) {
         $context_text = trim($context_node->text());
         return $context_text;
-      }else{
+      }
+      else {
         // Drupal native search_excerpt function.
         $context_text = search_excerpt($needle, trim($context_node->text()));
         return drupal_render($context_text);
       }
-    }else{
+    }
+    else {
       return "";
     }
   }

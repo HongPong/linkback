@@ -90,9 +90,10 @@ function linkback_pingback__receive_pingback($source_uri, $target_uri) {
     foreach ($langs as $lan) {
       // Iterate over all languages to get entity id,
       // here we can obtain entity type.
-      try{
+      try {
         $route_params = Url::fromUserInput(str_replace($base_secure_url, "", $target_uri), ['language' => $lan])->getRouteParameters();
-      }catch (InvalidArgumentException $exception){
+      }
+      catch (InvalidArgumentException $exception) {
         $route_params = Url::fromUserInput(str_replace($base_insecure_url, "", $target_uri), ['language' => $lan])->getRouteParameters();
       }
       foreach ($route_params as $entity_type => $entity_id) {

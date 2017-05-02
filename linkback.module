@@ -143,7 +143,7 @@ function linkback_form_field_config_edit_form_alter(array &$form, FormStateInter
  */
 function template_preprocess_linkback(&$variables) {
   // Helpful $content variable for templates.
-  $variables += array('content' => array());
+  $variables += ['content' => []];
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
@@ -153,9 +153,9 @@ function template_preprocess_linkback(&$variables) {
  * Implements hook_theme().
  */
 function linkback_theme() {
-  return array(
-    'linkback' => array(
+  return [
+    'linkback' => [
       'render element' => 'elements',
-    )
-  );
+    ],
+  ];
 }
