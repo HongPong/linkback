@@ -48,7 +48,7 @@ class LinkbackAdminOverview extends FormBase {
    * Creates a CommentAdminOverview form.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager service.
+   *   The entity type manager service.
    * @param \Drupal\Core\Entity\EntityStorageInterface $linkback_storage
    *   The linkback storage.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
