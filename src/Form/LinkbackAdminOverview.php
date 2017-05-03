@@ -197,11 +197,11 @@ class LinkbackAdminOverview extends FormBase {
       $links = [];
       $links['edit'] = [
         'title' => $this->t('Edit'),
-        'url' => $linkback->urlInfo('edit-form', $linkback_uri_options),
+        'url' => $linkback->toUrl('edit-form', $linkback_uri_options),
       ];
       $links['delete'] = [
         'title' => $this->t('Delete'),
-        'url' => $linkback->urlInfo('delete-form', $linkback_uri_options),
+        'url' => $linkback->toUrl('delete-form', $linkback_uri_options),
       ];
       $options[$linkback->id()]['operations']['data'] = [
         '#type' => 'operations',
