@@ -5,7 +5,7 @@ namespace Drupal\linkback\Form;
 use Drupal\linkback\LinkbackInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -19,9 +19,9 @@ class LinkbackAdminOverview extends FormBase {
   /**
    * The entity storage.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * The linkback storage.
@@ -47,7 +47,7 @@ class LinkbackAdminOverview extends FormBase {
   /**
    * Creates a CommentAdminOverview form.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager service.
    * @param \Drupal\Core\Entity\EntityStorageInterface $linkback_storage
    *   The linkback storage.
@@ -57,12 +57,12 @@ class LinkbackAdminOverview extends FormBase {
    *   The module handler.
    */
   public function __construct(
-      EntityManagerInterface $entity_manager,
+      EntityTypeManagerInterface $entity_type_manager,
       EntityStorageInterface $linkback_storage,
       DateFormatterInterface $date_formatter,
       ModuleHandlerInterface $module_handler
   ) {
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->linkbackStorage = $linkback_storage;
     $this->dateFormatter = $date_formatter;
     $this->moduleHandler = $module_handler;
@@ -73,8 +73,8 @@ class LinkbackAdminOverview extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager'),
-      $container->get('entity.manager')->getStorage('linkback'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.manager')->getStorage('linkback'),
       $container->get('date.formatter'),
       $container->get('module_handler')
     );

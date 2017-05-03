@@ -43,7 +43,7 @@ class ConfirmDeleteMultiple extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')->getStorage('linkback')
+      $container->get('entity_type.manager')->getStorage('linkback')
     );
   }
 
