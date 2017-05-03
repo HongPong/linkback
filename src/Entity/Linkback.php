@@ -242,7 +242,21 @@ class Linkback extends ContentEntityBase implements LinkbackInterface {
       ->setLabel(t('Content reference'))
       ->setDescription(t('The content id.'))
       ->setSetting('target_type', 'node')
-      ->setRequired(TRUE);
+      ->setRequired(TRUE)
+      ->setDisplayOptions('form',[
+        'type' => 'entity_reference_autocomplete',
+        'weight' => -3,
+        'settings' => [
+          'match_operator'    => 'CONTAINS',
+          'size'              => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder'       => '',
+        ]
+      ])
+      ->setDisplayOptions('view', [
+        'weight' => 0,
+      ])
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['url'] = BaseFieldDefinition::create('uri')
       ->setLabel(t('URL'))
