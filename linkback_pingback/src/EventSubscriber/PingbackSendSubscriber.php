@@ -86,6 +86,7 @@ class PingbackSendSubscriber implements EventSubscriberInterface {
   public function sendPingback(Url $sourceUrl, Url $targetUrl) {
     $source = $sourceUrl->setOption("absolute", TRUE)->toString();
     $target = $targetUrl->setOption("absolute", TRUE)->toString();
+    $this->logger->debug('Event linkback_send trying to pingback from %source to %target.', ['%source' => $source, '%target' => $target]);
     if ($xmlrpc_endpoint = $this->getXmlRpcEndpoint($target)) {
       $params = [
         '%source' => $source,
@@ -109,8 +110,9 @@ class PingbackSendSubscriber implements EventSubscriberInterface {
           '%target' => $target,
           '@errno' => xmlrpc_errno(),
           '@description' => xmlrpc_error_msg(),
+          '%xmlrpc' => $xmlrpc_endpoint,
         ];
-        $this->logger->error('Pingback to %target from %source failed.<br />Error @errno: @description', $params);
+        $this->logger->error('Pingback to %target from %source failed.<br />Error @errno: @description in %xmlrpc', $params);
         return FALSE;
       }
 
@@ -146,19 +148,19 @@ class PingbackSendSubscriber implements EventSubscriberInterface {
     catch (BadResponseException $exception) {
       $response = $exception->getResponse();
       $this->logger->notice('Failed to fetch url %endpoint due to HTTP error "%error"', [
-        '%endpoint' => $xmlrpc_endpoint,
+        '%endpoint' => $endpoint,
         '%error' => $response->getStatusCode() . ' ' . $response->getReasonPhrase(),
       ]);
     }
     catch (RequestException $exception) {
-      $this->logger->notice('Failed to fetch url %endpoint due to error "%error"', [
-        '%endpoint' => $xmlrpc_endpoint,
+      $this->logger->notice('Failed to fetch url %url due to request error "%error"', [
+        '%url' => $url,
         '%error' => $exception->getMessage(),
       ]);
     }
     catch (InvalidArgumentException $exception) {
-      $this->logger->notice('Failed to fetch url %endpoint due to error "%error"', [
-        '%endpoint' => $xmlrpc_endpoint,
+      $this->logger->notice('Failed to fetch url %endpoint due to invalid argument error "%error"', [
+        '%endpoint' => $endpoint,
         '%error' => $exception->getMessage(),
       ]);
     }
