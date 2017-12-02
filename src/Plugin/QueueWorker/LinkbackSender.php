@@ -106,7 +106,13 @@ abstract class LinkbackSender extends QueueWorkerBase implements ContainerFactor
     $urls = $this->getBodyUrls($content->get('body')->value);
 
     foreach ($urls as $target_url) {
-      $target_url = Url::fromUri($target_url);
+      try{
+        $target_url = Url::fromUri($target_url);
+      }
+      catch(\InvalidArgumentException $e ){
+        // Prevent pinging links not accepted by drupal Url processor
+        continue;
+      }
       // TODO: Add batch process as in
       // https://api.drupal.org/api/drupal/core%21modules%21locale%21src%21Plugin%21QueueWorker%21LocaleTranslation.php/function/LocaleTranslation%3A%3AprocessItem/8.2.x
       $event = new LinkbackSendEvent($content->toUrl('canonical', ['absolute' => TRUE]), $target_url);
